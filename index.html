@@ -557,12 +557,15 @@ function getTouchDist(touches) {
 }
 
 function clampPan(s) {
-  const w = scene.offsetWidth  * s;
-  const h = scene.offsetHeight * s;
-  const maxX = Math.max(0, (w - window.innerWidth)  / 2);
-  const maxY = Math.max(0, (h - window.innerHeight) / 2);
-  panX = Math.min(maxX, Math.max(-maxX, panX));
-  panY = Math.min(maxY, Math.max(-maxY, panY));
+  const hw = (scene.offsetWidth  * s) / 2;
+  const hh = (scene.offsetHeight * s) / 2;
+  // カード端が画面端に届く範囲を正確に計算
+  const maxPanX = Math.max(0, hw - sceneNatCX);
+  const minPanX = Math.min(0, window.innerWidth  - sceneNatCX - hw);
+  const maxPanY = Math.max(0, hh - sceneNatCY);
+  const minPanY = Math.min(0, window.innerHeight - sceneNatCY - hh);
+  panX = Math.min(maxPanX, Math.max(minPanX, panX));
+  panY = Math.min(maxPanY, Math.max(minPanY, panY));
 }
 
 function applyTransform(scale, animate) {

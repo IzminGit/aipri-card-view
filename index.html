@@ -535,9 +535,11 @@ let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
 let lastTouchEnd = 0;
 
 // ピンチズーム＆パン
-let pinchStartDist = 0;
-let currentScale   = 1;
-let targetScale    = 1;
+let pinchStartDist  = 0;
+let pinchStartScale = 1;
+let pinchStartPanX  = 0, pinchStartPanY  = 0;
+let pinchStartMidX  = 0, pinchStartMidY  = 0;
+let currentScale    = 1;
 let panX = 0, panY = 0;
 let panStartX = 0, panStartY = 0;
 let panBaseX  = 0, panBaseY  = 0;
@@ -545,18 +547,22 @@ let isPanning = false;
 const SCALE_MIN = 0.8;
 const SCALE_MAX = 5.0;
 
+// カードの自然な中心座標（transform なし）
+let sceneNatCX = 0, sceneNatCY = 0;
+
 function getTouchDist(touches) {
   const dx = touches[0].clientX - touches[1].clientX;
   const dy = touches[0].clientY - touches[1].clientY;
   return Math.hypot(dx, dy);
 }
 
-function clampPan(scale) {
-  const rect    = scene.getBoundingClientRect();
-  const maxPanX = Math.max(0, (rect.width  * scale - window.innerWidth)  / 2 / scale * scale);
-  const maxPanY = Math.max(0, (rect.height * scale - window.innerHeight) / 2 / scale * scale);
-  panX = Math.min(maxPanX, Math.max(-maxPanX, panX));
-  panY = Math.min(maxPanY, Math.max(-maxPanY, panY));
+function clampPan(s) {
+  const w = scene.offsetWidth  * s;
+  const h = scene.offsetHeight * s;
+  const maxX = Math.max(0, (w - window.innerWidth)  / 2);
+  const maxY = Math.max(0, (h - window.innerHeight) / 2);
+  panX = Math.min(maxX, Math.max(-maxX, panX));
+  panY = Math.min(maxY, Math.max(-maxY, panY));
 }
 
 function applyTransform(scale, animate) {
@@ -569,10 +575,13 @@ function applyTransform(scale, animate) {
 
 scene.addEventListener('touchstart', e => {
   if (e.touches.length === 2) {
-    isPanning      = false;
-    pinchStartDist = getTouchDist(e.touches);
-    targetScale    = currentScale;
-    panBaseX = panX; panBaseY = panY;
+    isPanning       = false;
+    pinchStartDist  = getTouchDist(e.touches);
+    pinchStartScale = currentScale;
+    pinchStartPanX  = panX;
+    pinchStartPanY  = panY;
+    pinchStartMidX  = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    pinchStartMidY  = (e.touches[0].clientY + e.touches[1].clientY) / 2;
     return;
   }
   touchStartX = panStartX = e.touches[0].clientX;
@@ -584,17 +593,15 @@ scene.addEventListener('touchstart', e => {
 
 scene.addEventListener('touchmove', e => {
   if (e.touches.length === 2) {
-    const dist  = getTouchDist(e.touches);
-    const scale = targetScale * (dist / pinchStartDist);
-    // ピンチ中心を基準に平行移動
-    const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-    const my = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-    const ratio = scale / currentScale - 1;
-    panX = panBaseX + (panBaseX - mx) * ratio;
-    panY = panBaseY + (panBaseY - my) * ratio;
-    applyTransform(scale, false);
-    panBaseX = panX; panBaseY = panY;
-    targetScale = currentScale;
+    const dist     = getTouchDist(e.touches);
+    const newScale = Math.min(SCALE_MAX, Math.max(SCALE_MIN, pinchStartScale * (dist / pinchStartDist)));
+    // ピンチ開始時の中心点が画面上で動かないようにパンを計算
+    panX = pinchStartMidX - sceneNatCX - (pinchStartMidX - sceneNatCX - pinchStartPanX) * (newScale / pinchStartScale);
+    panY = pinchStartMidY - sceneNatCY - (pinchStartMidY - sceneNatCY - pinchStartPanY) * (newScale / pinchStartScale);
+    currentScale = newScale;
+    clampPan(currentScale);
+    scene.style.transition = 'none';
+    scene.style.transform  = `translate(${panX}px,${panY}px) scale(${currentScale})`;
     return;
   }
   if (!isPanning) return;
@@ -657,6 +664,13 @@ scene.addEventListener('click', e => {
 // ===== 初期化 =====
 updateDisplay(cards[0], 0);
 preload(0);
+
+// カードの自然な中心を記録（transform なし時）
+requestAnimationFrame(() => {
+  const r = scene.getBoundingClientRect();
+  sceneNatCX = r.left + r.width  / 2;
+  sceneNatCY = r.top  + r.height / 2;
+});
 </script>
 </body>
 </html>

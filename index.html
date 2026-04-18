@@ -534,12 +534,16 @@ document.getElementById('tabs').addEventListener('click', e => {
 let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
 let lastTouchEnd = 0;
 
-// ピンチズーム
+// ピンチズーム＆パン
 let pinchStartDist = 0;
 let currentScale   = 1;
 let targetScale    = 1;
+let panX = 0, panY = 0;
+let panStartX = 0, panStartY = 0;
+let panBaseX  = 0, panBaseY  = 0;
+let isPanning = false;
 const SCALE_MIN = 0.8;
-const SCALE_MAX = 3.0;
+const SCALE_MAX = 10.0;
 
 function getTouchDist(touches) {
   const dx = touches[0].clientX - touches[1].clientX;
@@ -547,35 +551,70 @@ function getTouchDist(touches) {
   return Math.hypot(dx, dy);
 }
 
-function applyScale(scale, animate) {
+function clampPan(scale) {
+  const rect    = scene.getBoundingClientRect();
+  const maxPanX = Math.max(0, (rect.width  * scale - window.innerWidth)  / 2 / scale * scale);
+  const maxPanY = Math.max(0, (rect.height * scale - window.innerHeight) / 2 / scale * scale);
+  panX = Math.min(maxPanX, Math.max(-maxPanX, panX));
+  panY = Math.min(maxPanY, Math.max(-maxPanY, panY));
+}
+
+function applyTransform(scale, animate) {
   currentScale = Math.min(SCALE_MAX, Math.max(SCALE_MIN, scale));
+  if (currentScale <= 1.05) { panX = 0; panY = 0; }
+  else clampPan(currentScale);
   scene.style.transition = animate ? 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)' : 'none';
-  scene.style.transform  = `scale(${currentScale})`;
+  scene.style.transform  = `translate(${panX}px,${panY}px) scale(${currentScale})`;
 }
 
 scene.addEventListener('touchstart', e => {
   if (e.touches.length === 2) {
+    isPanning      = false;
     pinchStartDist = getTouchDist(e.touches);
     targetScale    = currentScale;
+    panBaseX = panX; panBaseY = panY;
     return;
   }
-  touchStartX    = e.touches[0].clientX;
-  touchStartY    = e.touches[0].clientY;
+  touchStartX = panStartX = e.touches[0].clientX;
+  touchStartY = panStartY = e.touches[0].clientY;
   touchStartTime = Date.now();
+  panBaseX = panX; panBaseY = panY;
+  isPanning = currentScale > 1.05;
 }, { passive: true });
 
 scene.addEventListener('touchmove', e => {
-  if (e.touches.length !== 2) return;
-  const dist  = getTouchDist(e.touches);
-  const scale = targetScale * (dist / pinchStartDist);
-  applyScale(scale, false);
+  if (e.touches.length === 2) {
+    const dist  = getTouchDist(e.touches);
+    const scale = targetScale * (dist / pinchStartDist);
+    // ピンチ中心を基準に平行移動
+    const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    const my = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    const ratio = scale / currentScale - 1;
+    panX = panBaseX + (panBaseX - mx) * ratio;
+    panY = panBaseY + (panBaseY - my) * ratio;
+    applyTransform(scale, false);
+    panBaseX = panX; panBaseY = panY;
+    targetScale = currentScale;
+    return;
+  }
+  if (!isPanning) return;
+  panX = panBaseX + (e.touches[0].clientX - panStartX);
+  panY = panBaseY + (e.touches[0].clientY - panStartY);
+  clampPan(currentScale);
+  scene.style.transition = 'none';
+  scene.style.transform  = `translate(${panX}px,${panY}px) scale(${currentScale})`;
 }, { passive: true });
 
 scene.addEventListener('touchend', e => {
-  // ピンチ終了：範囲外ならスナップ、1倍付近ならリセット
-  if (e.touches.length < 2 && pinchStartDist > 0) {
+  if (pinchStartDist > 0 && e.touches.length < 2) {
     pinchStartDist = 0;
-    if (currentScale < 1.05) applyScale(1, true);
+    if (currentScale < 1.05) applyTransform(1, true);
+    return;
+  }
+  if (isPanning) {
+    isPanning = false;
+    clampPan(currentScale);
+    scene.style.transform = `translate(${panX}px,${panY}px) scale(${currentScale})`;
     return;
   }
 
@@ -586,7 +625,6 @@ scene.addEventListener('touchend', e => {
   const cx = e.changedTouches[0].clientX;
   const cy = e.changedTouches[0].clientY;
 
-  // 拡大中はスワイプ・フリップ無効
   if (currentScale > 1.05) return;
 
   if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
@@ -597,7 +635,7 @@ scene.addEventListener('touchend', e => {
 }, { passive: true });
 
 // ダブルタップでリセット
-scene.addEventListener('dblclick', () => applyScale(1, true));
+scene.addEventListener('dblclick', () => { panX = 0; panY = 0; applyTransform(1, true); });
 
 // ===== ボタン =====
 document.getElementById('btn-prev').addEventListener('click', () => navigate(-1));

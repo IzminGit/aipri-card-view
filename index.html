@@ -547,8 +547,18 @@ let isPanning = false;
 const SCALE_MIN = 0.8;
 const SCALE_MAX = 5.0;
 
-// カードの自然な中心座標（transform なし）
-let sceneNatCX = 0, sceneNatCY = 0;
+// カードの自然な中心座標・サイズ（transform なし）
+let sceneNatCX = 0, sceneNatCY = 0, sceneNatW = 0, sceneNatH = 0;
+
+function refreshNatBounds() {
+  if (currentScale > 1.05) return; // 拡大中は測定しない
+  const r = scene.getBoundingClientRect();
+  if (r.height === 0) return;      // 未ロードなら無視
+  sceneNatCX = r.left + r.width  / 2;
+  sceneNatCY = r.top  + r.height / 2;
+  sceneNatW  = r.width;
+  sceneNatH  = r.height;
+}
 
 function getTouchDist(touches) {
   const dx = touches[0].clientX - touches[1].clientX;
@@ -557,9 +567,8 @@ function getTouchDist(touches) {
 }
 
 function clampPan(s) {
-  const hw = (scene.offsetWidth  * s) / 2;
-  const hh = (scene.offsetHeight * s) / 2;
-  // カード端が画面端に届く範囲を正確に計算
+  const hw = (sceneNatW * s) / 2;
+  const hh = (sceneNatH * s) / 2;
   const maxPanX = Math.max(0, hw - sceneNatCX);
   const minPanX = Math.min(0, window.innerWidth  - sceneNatCX - hw);
   const maxPanY = Math.max(0, hh - sceneNatCY);
@@ -578,6 +587,7 @@ function applyTransform(scale, animate) {
 
 scene.addEventListener('touchstart', e => {
   if (e.touches.length === 2) {
+    refreshNatBounds(); // ピンチ直前に最新サイズを取得
     isPanning       = false;
     pinchStartDist  = getTouchDist(e.touches);
     pinchStartScale = currentScale;
@@ -664,16 +674,12 @@ scene.addEventListener('click', e => {
   flipCard(e.clientX, e.clientY);
 });
 
+// 画像ロード後に自然サイズを再計測
+imgFront.addEventListener('load', refreshNatBounds);
+
 // ===== 初期化 =====
 updateDisplay(cards[0], 0);
 preload(0);
-
-// カードの自然な中心を記録（transform なし時）
-requestAnimationFrame(() => {
-  const r = scene.getBoundingClientRect();
-  sceneNatCX = r.left + r.width  / 2;
-  sceneNatCY = r.top  + r.height / 2;
-});
 </script>
 </body>
 </html>

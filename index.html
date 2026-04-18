@@ -534,13 +534,51 @@ document.getElementById('tabs').addEventListener('click', e => {
 let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
 let lastTouchEnd = 0;
 
+// ピンチズーム
+let pinchStartDist = 0;
+let currentScale   = 1;
+let targetScale    = 1;
+const SCALE_MIN = 0.8;
+const SCALE_MAX = 3.0;
+
+function getTouchDist(touches) {
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.hypot(dx, dy);
+}
+
+function applyScale(scale, animate) {
+  currentScale = Math.min(SCALE_MAX, Math.max(SCALE_MIN, scale));
+  scene.style.transition = animate ? 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)' : 'none';
+  scene.style.transform  = `scale(${currentScale})`;
+}
+
 scene.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    pinchStartDist = getTouchDist(e.touches);
+    targetScale    = currentScale;
+    return;
+  }
   touchStartX    = e.touches[0].clientX;
   touchStartY    = e.touches[0].clientY;
   touchStartTime = Date.now();
 }, { passive: true });
 
+scene.addEventListener('touchmove', e => {
+  if (e.touches.length !== 2) return;
+  const dist  = getTouchDist(e.touches);
+  const scale = targetScale * (dist / pinchStartDist);
+  applyScale(scale, false);
+}, { passive: true });
+
 scene.addEventListener('touchend', e => {
+  // ピンチ終了：範囲外ならスナップ、1倍付近ならリセット
+  if (e.touches.length < 2 && pinchStartDist > 0) {
+    pinchStartDist = 0;
+    if (currentScale < 1.05) applyScale(1, true);
+    return;
+  }
+
   lastTouchEnd = Date.now();
   const dx = e.changedTouches[0].clientX - touchStartX;
   const dy = e.changedTouches[0].clientY - touchStartY;
@@ -548,12 +586,18 @@ scene.addEventListener('touchend', e => {
   const cx = e.changedTouches[0].clientX;
   const cy = e.changedTouches[0].clientY;
 
+  // 拡大中はスワイプ・フリップ無効
+  if (currentScale > 1.05) return;
+
   if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
     navigate(dx < 0 ? 1 : -1);
   } else if (Math.abs(dx) < 15 && Math.abs(dy) < 15 && dt < 400) {
     flipCard(cx, cy);
   }
 }, { passive: true });
+
+// ダブルタップでリセット
+scene.addEventListener('dblclick', () => applyScale(1, true));
 
 // ===== ボタン =====
 document.getElementById('btn-prev').addEventListener('click', () => navigate(-1));

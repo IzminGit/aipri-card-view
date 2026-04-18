@@ -79,26 +79,20 @@
   /* ===== カード ===== */
   .card-scene {
     width: min(88vw, 360px);
-    aspect-ratio: 3/4;
     perspective: 800px;
     cursor: pointer;
-    position: relative;
     -webkit-tap-highlight-color: transparent;
   }
 
   .card-inner {
     width: 100%;
-    height: 100%;
     position: relative;
     transform-style: preserve-3d;
     transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 16px;
   }
 
-
+  /* 表面はノーマルフローでコンテナの高さを決める */
   .card-face {
-    position: absolute;
-    inset: 0;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     border-radius: 16px;
@@ -106,14 +100,16 @@
     box-shadow: var(--card-shadow);
   }
 
+  /* 裏面は表面に重ねて絶対配置 */
   .card-face.card-back {
+    position: absolute;
+    inset: 0;
     transform: rotateY(180deg);
   }
 
   .card-face img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
     display: block;
   }
 
@@ -398,7 +394,10 @@ function updateDisplay(card, index) {
   imgBack.src  = imgUrl(card.id, 'U');
 
   inner.style.transition = 'none';
-  inner.style.transform = 'rotateY(0deg)';
+  inner.style.transform = `rotateY(${currentDeg}deg)`;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    inner.style.transition = '';
+  }));
 }
 
 function preload(index) {
@@ -475,8 +474,7 @@ function navigate(dir) {
   setTimeout(() => {
     scene.classList.remove(outClass);
     currentIndex = (currentIndex + dir + CARDS.length) % CARDS.length;
-    isFlipped = false;
-    currentDeg = 0;
+    currentDeg = isFlipped ? 180 : 0;
     updateDisplay(CARDS[currentIndex], currentIndex);
     preload(currentIndex);
 

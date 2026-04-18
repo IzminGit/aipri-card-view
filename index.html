@@ -95,13 +95,6 @@
     border-radius: 16px;
   }
 
-  .card-inner.flipped-right {
-    transform: rotateY(180deg);
-  }
-
-  .card-inner.flipped-left {
-    transform: rotateY(-180deg);
-  }
 
   .card-face {
     position: absolute;
@@ -376,6 +369,7 @@ const PARTICLE_COLORS_2 = ['#ff9ec4','#ffcce0','#ffa0d0','#ffb0e8'];
 let currentIndex = 0;
 let isFlipped = false;
 let isAnimating = false;
+let currentDeg = 0;
 
 const scene    = document.getElementById('card-scene');
 const inner    = document.getElementById('card-inner');
@@ -403,7 +397,8 @@ function updateDisplay(card, index) {
   imgFront.src = imgUrl(card.id, 'O');
   imgBack.src  = imgUrl(card.id, 'U');
 
-  inner.classList.remove('flipped-right', 'flipped-left');
+  inner.style.transition = 'none';
+  inner.style.transform = 'rotateY(0deg)';
 }
 
 function preload(index) {
@@ -446,13 +441,20 @@ function flipCard(cx, cy) {
   if (isAnimating) return;
   isFlipped = !isFlipped;
 
-  if (isFlipped) {
-    const rect = scene.getBoundingClientRect();
-    const tapRight = (cx || window.innerWidth / 2) >= rect.left + rect.width / 2;
-    inner.classList.remove('flipped-right', 'flipped-left');
-    inner.classList.add(tapRight ? 'flipped-right' : 'flipped-left');
-  } else {
-    inner.classList.remove('flipped-right', 'flipped-left');
+  const rect = scene.getBoundingClientRect();
+  const tapRight = (cx || window.innerWidth / 2) >= rect.left + rect.width / 2;
+
+  inner.style.transition = 'transform 0.65s cubic-bezier(0.4, 0, 0.2, 1)';
+  currentDeg += tapRight ? 180 : -180;
+  inner.style.transform = `rotateY(${currentDeg}deg)`;
+
+  // 表面に戻った後、次のフリップに備えて0にリセット（アニメなし）
+  if (!isFlipped) {
+    setTimeout(() => {
+      inner.style.transition = 'none';
+      inner.style.transform = 'rotateY(0deg)';
+      currentDeg = 0;
+    }, 660);
   }
 
   scene.classList.add('shimmering');
@@ -474,6 +476,7 @@ function navigate(dir) {
     scene.classList.remove(outClass);
     currentIndex = (currentIndex + dir + CARDS.length) % CARDS.length;
     isFlipped = false;
+    currentDeg = 0;
     updateDisplay(CARDS[currentIndex], currentIndex);
     preload(currentIndex);
 

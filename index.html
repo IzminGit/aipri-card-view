@@ -95,8 +95,12 @@
     border-radius: 16px;
   }
 
-  .card-inner.flipped {
+  .card-inner.flipped-right {
     transform: rotateY(180deg);
+  }
+
+  .card-inner.flipped-left {
+    transform: rotateY(-180deg);
   }
 
   .card-face {
@@ -399,11 +403,7 @@ function updateDisplay(card, index) {
   imgFront.src = imgUrl(card.id, 'O');
   imgBack.src  = imgUrl(card.id, 'U');
 
-  if (isFlipped) {
-    inner.classList.add('flipped');
-  } else {
-    inner.classList.remove('flipped');
-  }
+  inner.classList.remove('flipped-right', 'flipped-left');
 }
 
 function preload(index) {
@@ -445,7 +445,15 @@ function spawnParticles(x, y, rarity) {
 function flipCard(cx, cy) {
   if (isAnimating) return;
   isFlipped = !isFlipped;
-  inner.classList.toggle('flipped', isFlipped);
+
+  if (isFlipped) {
+    const rect = scene.getBoundingClientRect();
+    const tapRight = (cx || window.innerWidth / 2) >= rect.left + rect.width / 2;
+    inner.classList.remove('flipped-right', 'flipped-left');
+    inner.classList.add(tapRight ? 'flipped-right' : 'flipped-left');
+  } else {
+    inner.classList.remove('flipped-right', 'flipped-left');
+  }
 
   scene.classList.add('shimmering');
   setTimeout(() => scene.classList.remove('shimmering'), 700);

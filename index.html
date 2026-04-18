@@ -143,10 +143,9 @@
     100% { background-position: -50% -50%; }
   }
 
-  /* レアリティ枠 */
-  .card-scene.rarity-4 .card-face { box-shadow: 0 8px 32px rgba(245,200,66,0.5), 0 0 0 2px var(--rarity4-color); }
-  .card-scene.rarity-3 .card-face { box-shadow: 0 8px 32px rgba(180,180,200,0.5), 0 0 0 2px var(--rarity3-color); }
-  .card-scene.rarity-2 .card-face { box-shadow: 0 8px 32px rgba(255,150,190,0.4), 0 0 0 2px var(--rarity2-color); }
+  .card-scene.rarity-4 .card-face { box-shadow: 0 8px 32px rgba(245,200,66,0.4); }
+  .card-scene.rarity-3 .card-face { box-shadow: 0 8px 32px rgba(180,180,200,0.4); }
+  .card-scene.rarity-2 .card-face { box-shadow: 0 8px 32px rgba(255,150,190,0.35); }
 
   /* ===== カード情報 ===== */
   .card-info {
@@ -481,6 +480,7 @@ function navigate(dir) {
 
 // ===== タッチ操作 =====
 let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+let lastTouchEnd = 0;  // iOSの touchend→click 二重発火を防ぐ
 
 scene.addEventListener('touchstart', e => {
   touchStartX = e.touches[0].clientX;
@@ -489,6 +489,7 @@ scene.addEventListener('touchstart', e => {
 }, { passive: true });
 
 scene.addEventListener('touchend', e => {
+  lastTouchEnd = Date.now();
   const dx = e.changedTouches[0].clientX - touchStartX;
   const dy = e.changedTouches[0].clientY - touchStartY;
   const dt = Date.now() - touchStartTime;
@@ -513,8 +514,9 @@ document.addEventListener('keydown', e => {
   if (e.key === ' ' || e.key === 'Enter') flipCard();
 });
 
-// ===== マウスクリック（PC） =====
+// ===== マウスクリック（PC専用・タッチ後500ms以内は無視） =====
 scene.addEventListener('click', e => {
+  if (Date.now() - lastTouchEnd < 500) return;
   flipCard(e.clientX, e.clientY);
 });
 

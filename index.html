@@ -217,16 +217,16 @@
     }
   }
 
-  /* ===== カード切り替えアニメ ===== */
-  .card-scene.slide-out-left  { animation: slideOutLeft  0.18s ease-in  forwards; }
-  .card-scene.slide-out-right { animation: slideOutRight 0.18s ease-in  forwards; }
-  .card-scene.slide-in-left   { animation: slideInLeft   0.25s ease-out forwards; }
-  .card-scene.slide-in-right  { animation: slideInRight  0.25s ease-out forwards; }
+  /* ===== カード切り替えアニメ（本をめくるエフェクト） ===== */
+  .card-scene.page-out-left  { animation: pageOutLeft  0.22s ease-in  forwards; }
+  .card-scene.page-out-right { animation: pageOutRight 0.22s ease-in  forwards; }
+  .card-scene.page-in-left   { animation: pageInLeft   0.28s ease-out forwards; }
+  .card-scene.page-in-right  { animation: pageInRight  0.28s ease-out forwards; }
 
-  @keyframes slideOutLeft  { from { transform:translateX(0)    scale(1);    opacity:1; } to { transform:translateX(-60px) scale(0.95); opacity:0; } }
-  @keyframes slideOutRight { from { transform:translateX(0)    scale(1);    opacity:1; } to { transform:translateX( 60px) scale(0.95); opacity:0; } }
-  @keyframes slideInLeft   { from { transform:translateX(60px) scale(0.95); opacity:0; } to { transform:translateX(0)     scale(1);    opacity:1; } }
-  @keyframes slideInRight  { from { transform:translateX(-60px)scale(0.95); opacity:0; } to { transform:translateX(0)     scale(1);    opacity:1; } }
+  @keyframes pageOutLeft  { from { transform: perspective(1200px) translateX(0)    rotateY(  0deg); opacity:1; } to { transform: perspective(1200px) translateX(-30%) rotateY( 35deg); opacity:0; } }
+  @keyframes pageOutRight { from { transform: perspective(1200px) translateX(0)    rotateY(  0deg); opacity:1; } to { transform: perspective(1200px) translateX( 30%) rotateY(-35deg); opacity:0; } }
+  @keyframes pageInLeft   { from { transform: perspective(1200px) translateX( 30%) rotateY(-35deg); opacity:0; } to { transform: perspective(1200px) translateX(0)    rotateY(  0deg); opacity:1; } }
+  @keyframes pageInRight  { from { transform: perspective(1200px) translateX(-30%) rotateY( 35deg); opacity:0; } to { transform: perspective(1200px) translateX(0)    rotateY(  0deg); opacity:1; } }
 </style>
 </head>
 <body>
@@ -496,8 +496,8 @@ function navigate(dir) {
   if (isAnimating) return;
   isAnimating = true;
 
-  const outClass = dir > 0 ? 'slide-out-left'  : 'slide-out-right';
-  const inClass  = dir > 0 ? 'slide-in-left'   : 'slide-in-right';
+  const outClass = dir > 0 ? 'page-out-left'  : 'page-out-right';
+  const inClass  = dir > 0 ? 'page-in-left'   : 'page-in-right';
 
   scene.classList.add(outClass);
   setTimeout(() => {
@@ -510,8 +510,8 @@ function navigate(dir) {
     setTimeout(() => {
       scene.classList.remove(inClass);
       isAnimating = false;
-    }, 260);
-  }, 180);
+    }, 290);
+  }, 220);
 }
 
 function switchSet(setIndex) {

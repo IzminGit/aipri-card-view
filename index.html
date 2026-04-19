@@ -209,6 +209,14 @@
     100% { transform: translate(var(--tx),var(--ty)) scale(0.3) rotate(var(--rot)); opacity: 0; }
   }
 
+  /* ===== タブレット（iPad mini等）向けカードサイズ拡大 ===== */
+  @media (min-width: 600px) {
+    .card-scene {
+      /* 縦方向のUI要素(約260px)を除いた高さ × カードのアスペクト比(≈0.72)で幅を決定 */
+      width: min(80vw, calc((100dvh - 260px) * 0.72), 560px);
+    }
+  }
+
   /* ===== カード切り替えアニメ ===== */
   .card-scene.slide-out-left  { animation: slideOutLeft  0.15s cubic-bezier(0.4,0,1,1)    forwards; }
   .card-scene.slide-out-right { animation: slideOutRight 0.15s cubic-bezier(0.4,0,1,1)    forwards; }

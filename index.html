@@ -41,7 +41,7 @@
   .tab {
     width: 100%;
     padding: 8px 4px 6px;
-    font-size: 14px;
+    font-size: clamp(9px, 2.5vw, 12px);
     font-weight: 700;
     color: #c09abf;
     text-align: center;
@@ -49,9 +49,8 @@
     border: 2px solid transparent;
     background: rgba(255,255,255,0.6);
     border-radius: 12px 12px 0 0;
-    white-space: normal;
-    word-break: break-all;
-    overflow-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
     transition: color 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
     -webkit-tap-highlight-color: transparent;
     line-height: 1.35;

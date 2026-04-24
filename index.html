@@ -15,6 +15,7 @@
     background: linear-gradient(135deg, #ffe4f0 0%, #f0e4ff 50%, #e4f0ff 100%);
     min-height: 100vh;
     min-height: 100dvh;
+    height: 100dvh;
     font-family: 'Hiragino Maru Gothic Pro', 'Rounded Mplus 1c', sans-serif;
     display: flex;
     flex-direction: column;
@@ -227,6 +228,70 @@
   @keyframes pageOutRight { from { transform: perspective(1200px) translateX(0)    rotateY(  0deg); opacity:1; } to { transform: perspective(1200px) translateX( 30%) rotateY(-35deg); opacity:0; } }
   @keyframes pageInLeft   { from { transform: perspective(1200px) translateX( 30%) rotateY(-35deg); opacity:0; } to { transform: perspective(1200px) translateX(0)    rotateY(  0deg); opacity:1; } }
   @keyframes pageInRight  { from { transform: perspective(1200px) translateX(-30%) rotateY( 35deg); opacity:0; } to { transform: perspective(1200px) translateX(0)    rotateY(  0deg); opacity:1; } }
+
+  /* ===== ビュー切り替えボタン ===== */
+  .view-toggle-btn {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(255,150,200,0.4);
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 1px 4px rgba(200,100,180,0.15);
+    color: #c040a0;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: 700;
+    transition: transform 0.15s, box-shadow 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .view-toggle-btn:active {
+    transform: scale(0.9);
+    box-shadow: 0 1px 2px rgba(200,100,180,0.2);
+  }
+
+  /* ===== グリッドビュー ===== */
+  .grid-view {
+    display: none;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px;
+    width: 100%;
+  }
+
+  .grid-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  @media (min-width: 480px)  { .grid-cards { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 700px)  { .grid-cards { grid-template-columns: repeat(5, 1fr); } }
+  @media (min-width: 900px)  { .grid-cards { grid-template-columns: repeat(6, 1fr); } }
+
+  .grid-card {
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(200,100,180,0.2);
+    transition: transform 0.12s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .grid-card:active          { transform: scale(0.95); }
+  .grid-card img             { width: 100%; height: auto; display: block; }
+  .grid-card.rarity-4        { box-shadow: 0 2px 10px rgba(245,200,66,0.5); }
+  .grid-card.rarity-3        { box-shadow: 0 2px 8px rgba(180,180,200,0.5); }
+  .grid-card.rarity-2        { box-shadow: 0 2px 8px rgba(255,150,190,0.4); }
+
+  /* グリッドモード時 */
+  body.mode-grid .bar-id,
+  body.mode-grid .bar-char,
+  body.mode-grid .bar-stars  { display: none; }
+  body.mode-grid .main       { display: none; }
+  body.mode-grid .grid-view  { display: block; }
 </style>
 </head>
 <body>
@@ -245,6 +310,7 @@
   <div class="bar-id"    id="bar-id">OA1-001</div>
   <div class="bar-char"  id="bar-char">いのり</div>
   <div class="bar-stars" id="bar-stars">★★★★</div>
+  <button class="view-toggle-btn" id="view-toggle" aria-label="一覧表示に切り替え">一覧</button>
 </div>
 
 <div class="main">
@@ -270,6 +336,11 @@
     <div class="flip-hint">タップで裏面表示</div>
     <button class="nav-btn" id="btn-next" aria-label="次のカード">▶</button>
   </div>
+</div>
+
+<!-- グリッドビュー -->
+<div class="grid-view" id="main-grid">
+  <div class="grid-cards" id="grid-cards"></div>
 </div>
 
 <script>
@@ -401,6 +472,7 @@ const PARTICLE_COLORS_2 = ['#ff9ec4','#ffcce0','#ffa0d0','#ffb0e8'];
 let currentSetIndex = 0;
 let currentIndex    = 0;
 let isFlipped       = false;
+let viewMode        = 'single';
 let isAnimating     = false;
 let currentDeg      = 0;
 
@@ -532,8 +604,56 @@ function switchSet(setIndex) {
     t.classList.toggle('active', i === setIndex);
   });
 
-  updateDisplay(cards[0], 0);
-  preload(0);
+  if (viewMode === 'grid') {
+    renderGrid();
+  } else {
+    updateDisplay(cards[0], 0);
+    preload(0);
+  }
+}
+
+// ===== グリッドビュー =====
+function renderGrid() {
+  const container = document.getElementById('grid-cards');
+  container.innerHTML = '';
+  cards.forEach((card, index) => {
+    const item = document.createElement('div');
+    item.className = `grid-card ${RARITY_CLASS[card.rarity] || 'rarity-3'}`;
+    const img = document.createElement('img');
+    img.src = imgUrl(card, 'O');
+    img.alt = card.name;
+    img.draggable = false;
+    img.loading = 'lazy';
+    item.appendChild(img);
+    item.addEventListener('click', () => {
+      currentIndex = index;
+      isFlipped    = false;
+      currentDeg   = 0;
+      updateDisplay(cards[index], index);
+      preload(index);
+      setViewMode('single');
+    });
+    container.appendChild(item);
+  });
+}
+
+function setViewMode(mode) {
+  viewMode = mode;
+  const btn = document.getElementById('view-toggle');
+  if (mode === 'grid') {
+    document.body.classList.add('mode-grid');
+    document.body.style.touchAction = 'pan-y';
+    btn.textContent = '1枚';
+    btn.setAttribute('aria-label', '1枚表示に切り替え');
+    renderGrid();
+  } else {
+    document.body.classList.remove('mode-grid');
+    document.body.style.touchAction = 'none';
+    btn.textContent = '一覧';
+    btn.setAttribute('aria-label', '一覧表示に切り替え');
+    updateDisplay(cards[currentIndex], currentIndex);
+    preload(currentIndex);
+  }
 }
 
 // ===== タブ =====
@@ -541,6 +661,10 @@ document.getElementById('tabs').addEventListener('click', e => {
   const tab = e.target.closest('.tab');
   if (!tab) return;
   switchSet(Number(tab.dataset.set));
+});
+
+document.getElementById('view-toggle').addEventListener('click', () => {
+  setViewMode(viewMode === 'single' ? 'grid' : 'single');
 });
 
 // ===== タッチ操作 =====

@@ -634,8 +634,8 @@ function renderGrid() {
     item.appendChild(img);
     item.addEventListener('click', () => {
       currentIndex = index;
-      isFlipped    = false;
-      currentDeg   = 0;
+      isFlipped    = gridSide === 'U';
+      currentDeg   = gridSide === 'U' ? 180 : 0;
       updateDisplay(cards[index], index);
       preload(index);
       setViewMode('single');

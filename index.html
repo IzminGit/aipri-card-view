@@ -230,8 +230,9 @@
   @keyframes pageInLeft   { from { transform: perspective(1200px) translateX( 30%) rotateY(-35deg); opacity:0; } to { transform: perspective(1200px) translateX(0)    rotateY(  0deg); opacity:1; } }
   @keyframes pageInRight  { from { transform: perspective(1200px) translateX(-30%) rotateY( 35deg); opacity:0; } to { transform: perspective(1200px) translateX(0)    rotateY(  0deg); opacity:1; } }
 
-  /* ===== ビュー切り替えボタン ===== */
-  .view-toggle-btn {
+  /* ===== ビュー切り替えボタン / 面切り替えボタン ===== */
+  .view-toggle-btn,
+  .side-toggle-btn {
     width: 36px; height: 36px;
     border-radius: 8px;
     border: 1.5px solid rgba(255,150,200,0.4);
@@ -248,10 +249,12 @@
     transition: transform 0.15s, box-shadow 0.15s;
     -webkit-tap-highlight-color: transparent;
   }
-  .view-toggle-btn:active {
+  .view-toggle-btn:active,
+  .side-toggle-btn:active {
     transform: scale(0.9);
     box-shadow: 0 1px 2px rgba(200,100,180,0.2);
   }
+  .side-toggle-btn { display: none; }
 
   /* ===== グリッドビュー ===== */
   .grid-view {
@@ -293,6 +296,7 @@
   body.mode-grid .bar-stars  { display: none; }
   body.mode-grid .main       { display: none; }
   body.mode-grid .grid-view  { display: block; }
+  body.mode-grid .side-toggle-btn { display: flex; }
 </style>
 </head>
 <body>
@@ -311,6 +315,7 @@
   <div class="bar-id"    id="bar-id">OA1-001</div>
   <div class="bar-char"  id="bar-char">いのり</div>
   <div class="bar-stars" id="bar-stars">★★★★</div>
+  <button class="side-toggle-btn" id="side-toggle" aria-label="裏面を表示">裏面</button>
   <button class="view-toggle-btn" id="view-toggle" aria-label="一覧表示に切り替え">一覧</button>
 </div>
 
@@ -474,6 +479,7 @@ let currentSetIndex = 0;
 let currentIndex    = 0;
 let isFlipped       = false;
 let viewMode        = 'single';
+let gridSide        = 'O';
 let isAnimating     = false;
 let currentDeg      = 0;
 
@@ -621,7 +627,7 @@ function renderGrid() {
     const item = document.createElement('div');
     item.className = `grid-card ${RARITY_CLASS[card.rarity] || 'rarity-3'}`;
     const img = document.createElement('img');
-    img.src = imgUrl(card, 'O');
+    img.src = imgUrl(card, gridSide);
     img.alt = card.name;
     img.draggable = false;
     img.loading = 'lazy';
@@ -646,6 +652,9 @@ function setViewMode(mode) {
     document.body.style.touchAction = 'pan-y';
     btn.textContent = '1枚';
     btn.setAttribute('aria-label', '1枚表示に切り替え');
+    // 面切り替えボタンのラベルを現在の状態に合わせる
+    const sideBtn = document.getElementById('side-toggle');
+    sideBtn.textContent = gridSide === 'O' ? '裏面' : '表面';
     renderGrid();
   } else {
     document.body.classList.remove('mode-grid');
@@ -667,6 +676,20 @@ document.getElementById('tabs').addEventListener('click', e => {
 document.getElementById('view-toggle').addEventListener('click', () => {
   setViewMode(viewMode === 'single' ? 'grid' : 'single');
 });
+
+document.getElementById('side-toggle').addEventListener('click', () => {
+  updateGridSide(gridSide === 'O' ? 'U' : 'O');
+});
+
+function updateGridSide(side) {
+  gridSide = side;
+  const btn = document.getElementById('side-toggle');
+  btn.textContent = side === 'O' ? '裏面' : '表面';
+  btn.setAttribute('aria-label', side === 'O' ? '裏面を表示' : '表面を表示');
+  document.querySelectorAll('#grid-cards .grid-card img').forEach((img, i) => {
+    img.src = imgUrl(cards[i], side);
+  });
+}
 
 // ===== タッチ操作 =====
 let touchStartX = 0, touchStartY = 0, touchStartTime = 0;

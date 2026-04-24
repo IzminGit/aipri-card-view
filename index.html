@@ -648,15 +648,19 @@ function setViewMode(mode) {
   viewMode = mode;
   const btn = document.getElementById('view-toggle');
   if (mode === 'grid') {
+    // 1枚表示の表裏状態をグリッドに引き継ぐ
+    gridSide = isFlipped ? 'U' : 'O';
     document.body.classList.add('mode-grid');
     document.body.style.touchAction = 'pan-y';
     btn.textContent = '1枚';
     btn.setAttribute('aria-label', '1枚表示に切り替え');
-    // 面切り替えボタンのラベルを現在の状態に合わせる
     const sideBtn = document.getElementById('side-toggle');
     sideBtn.textContent = gridSide === 'O' ? '裏面' : '表面';
     renderGrid();
   } else {
+    // グリッドの表裏状態を1枚表示に引き継ぐ
+    isFlipped  = gridSide === 'U';
+    currentDeg = gridSide === 'U' ? 180 : 0;
     document.body.classList.remove('mode-grid');
     document.body.style.touchAction = 'none';
     btn.textContent = '一覧';

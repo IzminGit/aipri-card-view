@@ -29,7 +29,7 @@
   .tabs {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     background: linear-gradient(180deg, #fff0f8 0%, #fce4f4 100%);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -233,10 +233,11 @@
 
 <!-- タブ -->
 <div class="tabs" id="tabs">
-  <button class="tab active" data-set="0">1だん</button>
-  <button class="tab" data-set="1">スペシャルカード</button>
-  <button class="tab" data-set="2">コレクショングミ</button>
-  <button class="tab" data-set="3">ミルフィーカード</button>
+  <button class="tab active" data-set="0">全て</button>
+  <button class="tab" data-set="1">1だん</button>
+  <button class="tab" data-set="2">スペシャルカード</button>
+  <button class="tab" data-set="3">コレクショングミ</button>
+  <button class="tab" data-set="4">ミルフィーカード</button>
 </div>
 
 <!-- カード情報バー -->
@@ -273,6 +274,7 @@
 
 <script>
 const SETS = [
+  { label: '全て', base: '', cards: [] },
   {
     label: '1だん',
     base: 'https://aipri.jp/card/img/oa1/',
@@ -386,6 +388,9 @@ const SETS = [
   },
 ];
 
+// 「全て」タブ用：全セットのカードをbase URL付きで結合
+SETS[0].cards = SETS.slice(1).flatMap(s => s.cards.map(c => ({ ...c, base: s.base })));
+
 const RARITY_STARS = { 4:'★★★★', 3:'★★★', 2:'★★' };
 const RARITY_CLASS  = { 4:'rarity-4', 3:'rarity-3', 2:'rarity-2' };
 const PARTICLES = ['♡','✦','★','✿','💫','🌸','✨'];
@@ -412,8 +417,8 @@ const barStars = document.getElementById('bar-stars');
 const cardName = document.getElementById('card-name');
 const cardProgress = document.getElementById('card-progress');
 
-function imgUrl(id, side) {
-  return `${base}${id}_${side}.webp`;
+function imgUrl(card, side) {
+  return `${card.base !== undefined ? card.base : base}${card.id}_${side}.webp`;
 }
 
 function updateDisplay(card, index) {
@@ -425,8 +430,8 @@ function updateDisplay(card, index) {
 
   scene.className = `card-scene ${RARITY_CLASS[card.rarity] || 'rarity-3'}`;
 
-  imgFront.src = imgUrl(card.id, 'O');
-  imgBack.src  = imgUrl(card.id, 'U');
+  imgFront.src = imgUrl(card, 'O');
+  imgBack.src  = imgUrl(card, 'U');
 
   inner.style.transition = 'none';
   inner.style.transform  = `rotateY(${currentDeg}deg)`;
@@ -439,8 +444,8 @@ function preload(index) {
   [index - 1, index + 1].forEach(i => {
     const idx = (i + cards.length) % cards.length;
     const c = cards[idx];
-    new Image().src = imgUrl(c.id, 'O');
-    new Image().src = imgUrl(c.id, 'U');
+    new Image().src = imgUrl(c, 'O');
+    new Image().src = imgUrl(c, 'U');
   });
 }
 

@@ -4,6 +4,23 @@
 
 カードを1枚ずつ大きく表示したり、一覧表示に切り替えたりできます。カード表面・裏面の切り替えにも対応しています。
 
+## スクリーンショット
+
+アプリの画面イメージです。
+
+> 画像ファイルを `docs/screenshot-card-view.png` として追加すると、以下に表示されます。
+
+![カードビューアーのスクリーンショット](docs/screenshot-card-view.png)
+
+スクリーンショットを追加する手順は以下です。
+
+1. アプリ画面をブラウザで開く
+2. スクリーンショットを撮影する
+3. 画像名を `screenshot-card-view.png` にする
+4. リポジトリ内に `docs` フォルダを作成する
+5. `docs/screenshot-card-view.png` として画像を配置する
+6. GitHubにコミットする
+
 ## 特徴
 
 - ブラウザだけで動作します
@@ -53,6 +70,8 @@
 ```text
 .
 ├── index.html   # アプリ本体。HTML / CSS / JavaScript / カードデータを含む
+├── docs/
+│   └── screenshot-card-view.png   # README用スクリーンショット
 └── README.md    # この説明ファイル
 ```
 

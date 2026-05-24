@@ -30,7 +30,7 @@
   .tabs {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     background: linear-gradient(180deg, #fff0f8 0%, #fce4f4 100%);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -305,9 +305,10 @@
 <div class="tabs" id="tabs">
   <button class="tab active" data-set="0">全て</button>
   <button class="tab" data-set="1">1だん</button>
-  <button class="tab" data-set="2">スペシャルカード</button>
-  <button class="tab" data-set="3">コレクショングミ</button>
-  <button class="tab" data-set="4">ミルフィーカード</button>
+  <button class="tab" data-set="2">2だん</button>
+  <button class="tab" data-set="3">スペシャルカード</button>
+  <button class="tab" data-set="4">コレクショングミ</button>
+  <button class="tab" data-set="5">ミルフィーカード</button>
 </div>
 
 <!-- カード情報バー -->
@@ -410,12 +411,81 @@ const SETS = [
       { id:'OA1-052', name:'チェックセットアップピンク',           char:'いのり', rarity:2 },
       { id:'OA1-053', name:'チェックセットアップピンク',           char:'あおい', rarity:2 },
       { id:'OA1-054', name:'ツートンジャケット',                   char:'ぐみ',   rarity:2 },
+      { id:'OA1M-001', name:'バルーンフェスピンク',                char:'いのり', rarity:4 },
+      { id:'OA1M-002', name:'バルーンフェスブルー',                char:'あおい', rarity:4 },
+      { id:'OA1M-003', name:'バルーンフェスグリーン',              char:'ぐみ',   rarity:4 },
+    ]
+  },
+  {
+    label: '2だん',
+    base: 'https://aipri.jp/card/img/oa2/',
+    cards: [
+      { id:'OA2-001', name:'ゆうきのフラワーバズリウム', char:'おりびあ', rarity:4 },
+      { id:'OA2-002', name:'すきすきハートバズリウム', char:'いのり', rarity:4 },
+      { id:'OA2-003', name:'ゆめゆめスターバズリウム', char:'あおい', rarity:4 },
+      { id:'OA2-004', name:'ゆうじょうスイーツバズリウム', char:'ぐみ', rarity:4 },
+      { id:'OA2-005', name:'ビリーブマーチブルー', char:'あおい', rarity:4 },
+      { id:'OA2-006', name:'ビリーブマーチグリーン', char:'ぐみ', rarity:4 },
+      { id:'OA2-007', name:'シールぺったんチアグリーン', char:'ぐみ', rarity:4 },
+      { id:'OA2-008', name:'シールぺったんチアイエロー', char:'おりびあ', rarity:4 },
+      { id:'OA2-009', name:'キャンディポップ', char:'ぐみ', rarity:4 },
+      { id:'OA2-010', name:'キャンディポップ', char:'あおい', rarity:4 },
+      { id:'OA2-011', name:'キャンディポップ', char:'いのり', rarity:4 },
+      { id:'OA2-012', name:'キャンディポップ', char:'おりびあ', rarity:4 },
+      { id:'OA2-013', name:'ゆめかわレインボー', char:'あおい', rarity:4 },
+      { id:'OA2-014', name:'ゆめかわレインボー', char:'いのり', rarity:4 },
+      { id:'OA2-015', name:'ゆめかわレインボー', char:'ぐみ', rarity:4 },
+      { id:'OA2-016', name:'リボンアイドルイエロー', char:'おりびあ', rarity:4 },
+      { id:'OA2-017', name:'リボンアイドルピンク', char:'いのり', rarity:4 },
+      { id:'OA2-018', name:'ガーデンラビット', char:'おりびあ', rarity:4 },
+      { id:'OA2-019', name:'ガーデンラビット', char:'いのり', rarity:4 },
+      { id:'OA2-020', name:'ガーデンラビット', char:'あおい', rarity:4 },
+      { id:'OA2-021', name:'ガーデンラビット', char:'ぐみ', rarity:4 },
+      { id:'OA2-022', name:'ハッピーバースデー！ピンク', char:'いのり', rarity:4 },
+      { id:'OA2-023', name:'アイプリすきすき', char:'いのり', rarity:3 },
+      { id:'OA2-024', name:'アイプリゆめゆめ', char:'あおい', rarity:3 },
+      { id:'OA2-025', name:'アイプリゆうじょう', char:'ぐみ', rarity:3 },
+      { id:'OA2-026', name:'アイプリゆうき', char:'おりびあ', rarity:3 },
+      { id:'OA2-027', name:'たなばたおねがい', char:'いのり', rarity:3 },
+      { id:'OA2-028', name:'たなばたおねがい', char:'ぐみ', rarity:3 },
+      { id:'OA2-029', name:'たなばたおねがい', char:'あおい', rarity:3 },
+      { id:'OA2-030', name:'たなばたおねがい', char:'おりびあ', rarity:3 },
+      { id:'OA2-031', name:'ポッピンマーチピンク', char:'ぐみ', rarity:3 },
+      { id:'OA2-032', name:'クラシックヴァイオリンブルー', char:'あおい', rarity:3 },
+      { id:'OA2-033', name:'ふっくらパン', char:'おりびあ', rarity:3 },
+      { id:'OA2-034', name:'ふっくらパン', char:'いのり', rarity:3 },
+      { id:'OA2-035', name:'ふっくらパン', char:'あおい', rarity:3 },
+      { id:'OA2-036', name:'あめぽつぽつパープル', char:'いのり', rarity:3 },
+      { id:'OA2-037', name:'あめぽつぽつパープル', char:'あおい', rarity:3 },
+      { id:'OA2-038', name:'ひまわりサマーレッド', char:'おりびあ', rarity:3 },
+      { id:'OA2-039', name:'ワンダーランドブルー', char:'いのり', rarity:3 },
+      { id:'OA2-040', name:'アメリカンダイナー', char:'ぐみ', rarity:3 },
+      { id:'OA2-041', name:'アメリカンダイナー', char:'おりびあ', rarity:3 },
+      { id:'OA2-042', name:'おねがいパティシエール ハローキティ', char:'いのり', rarity:3 },
+      { id:'OA2-043', name:'おねがいパティシエール シナモロール', char:'あおい', rarity:3 },
+      { id:'OA2-044', name:'おねがいパティシエール けろけろけろっぴ', char:'ぐみ', rarity:3 },
+      { id:'OA2-045', name:'おねがいパティシエール ポムポムプリン', char:'おりびあ', rarity:3 },
+      { id:'OA2-046', name:'おねがいちゅうがくせいふく', char:'いのり', rarity:2 },
+      { id:'OA2-047', name:'おねがいちゅうがくせいふく', char:'あおい', rarity:2 },
+      { id:'OA2-048', name:'おねがいちゅうがくせいふく', char:'ぐみ', rarity:2 },
+      { id:'OA2-049', name:'おねがいちゅうがくせいふく', char:'おりびあ', rarity:2 },
+      { id:'OA2-050', name:'ワッペンデニム', char:'あおい', rarity:2 },
+      { id:'OA2-051', name:'ワッペンデニム', char:'ぐみ', rarity:2 },
+      { id:'OA2-052', name:'ワッペンパーカー', char:'ぐみ', rarity:2 },
+      { id:'OA2-053', name:'ワッペンパーカー', char:'いのり', rarity:2 },
+      { id:'OA2-054', name:'フレッシュフラワーピンク', char:'いのり', rarity:2 },
+      { id:'OA2-055', name:'チューリップビタミンイエロー', char:'おりびあ', rarity:2 },
+      { id:'OA2-056', name:'レトロガールカナリア', char:'おりびあ', rarity:2 },
+      { id:'OA2-057', name:'アクティブダンスイエロー', char:'あおい', rarity:2 },
     ]
   },
   {
     label: 'スペシャルカード',
     base: 'https://aipri.jp/card/img/special/',
     cards: [
+      { id:'OP-033',   name:'おねがいパティシエール ハローキティ',     char:'いのり',   rarity:4 },
+      { id:'OP-032',   name:'おねがいパティシエール ポムポムプリン',   char:'おりびあ', rarity:4 },
+      { id:'OP-021',   name:'やきたてクッキーいちごミルク',           char:'あおい',   rarity:4 },
       { id:'OP-022',   name:'すきすきハートバズリウム',       char:'いのり', rarity:4 },
       { id:'OP-015',   name:'ほしのゆうびんやさんイエロー',   char:'あおい', rarity:4 },
       { id:'OP-020',   name:'ラブリーマーガレットイエロー',   char:'いのり', rarity:4 },

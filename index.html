@@ -278,13 +278,31 @@
 
   .grid-card {
     border-radius: 10px;
-    overflow: hidden;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(200,100,180,0.2);
     transition: transform 0.12s;
     -webkit-tap-highlight-color: transparent;
+    perspective: 700px;
   }
   .grid-card:active          { transform: scale(0.95); }
+  .grid-card-inner {
+    position: relative;
+    width: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .grid-card.flipped .grid-card-inner { transform: rotateY(180deg); }
+  .grid-card-face {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .grid-card-face.card-back {
+    position: absolute;
+    inset: 0;
+    transform: rotateY(180deg);
+  }
   .grid-card img             { width: 100%; height: auto; display: block; }
   .grid-card.rarity-4        { box-shadow: 0 2px 10px rgba(245,200,66,0.5); }
   .grid-card.rarity-3        { box-shadow: 0 2px 8px rgba(180,180,200,0.5); }
@@ -704,12 +722,32 @@ function renderGrid() {
   cards.forEach((card, index) => {
     const item = document.createElement('div');
     item.className = `grid-card ${RARITY_CLASS[card.rarity] || 'rarity-3'}`;
-    const img = document.createElement('img');
-    img.src = imgUrl(card, gridSide);
-    img.alt = card.name;
-    img.draggable = false;
-    img.loading = 'lazy';
-    item.appendChild(img);
+    item.classList.toggle('flipped', gridSide === 'U');
+
+    const inner = document.createElement('div');
+    inner.className = 'grid-card-inner';
+
+    const front = document.createElement('div');
+    front.className = 'grid-card-face card-front';
+    const frontImg = document.createElement('img');
+    frontImg.src = imgUrl(card, 'O');
+    frontImg.alt = `${card.name} 表面`;
+    frontImg.draggable = false;
+    frontImg.loading = 'lazy';
+    front.appendChild(frontImg);
+
+    const back = document.createElement('div');
+    back.className = 'grid-card-face card-back';
+    const backImg = document.createElement('img');
+    backImg.src = imgUrl(card, 'U');
+    backImg.alt = `${card.name} 裏面`;
+    backImg.draggable = false;
+    backImg.loading = 'lazy';
+    back.appendChild(backImg);
+
+    inner.appendChild(front);
+    inner.appendChild(back);
+    item.appendChild(inner);
     item.addEventListener('click', () => {
       currentIndex = index;
       isFlipped    = gridSide === 'U';
@@ -768,8 +806,8 @@ function updateGridSide(side) {
   const btn = document.getElementById('side-toggle');
   btn.textContent = side === 'O' ? '裏面' : '表面';
   btn.setAttribute('aria-label', side === 'O' ? '裏面を表示' : '表面を表示');
-  document.querySelectorAll('#grid-cards .grid-card img').forEach((img, i) => {
-    img.src = imgUrl(cards[i], side);
+  document.querySelectorAll('#grid-cards .grid-card').forEach(card => {
+    card.classList.toggle('flipped', side === 'U');
   });
 }
 

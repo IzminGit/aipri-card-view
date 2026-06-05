@@ -5,91 +5,916 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>おねがいアイプリ カードビューアー</title>
 <style>
-  body { font-family: sans-serif; margin: 0; background: #fff0f8; color: #c040a0; }
-  .tabs { display: flex; gap: 4px; padding: 8px; background: #ffe4f0; position: sticky; top: 0; z-index: 1; }
-  .tab { flex: 1; border: 1px solid #f3a6ce; border-radius: 10px; background: white; padding: 8px 4px; font-weight: bold; color: #c040a0; }
-  .tab.active { background: #ffd6eb; }
-  .card-bar { display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(255,255,255,.75); }
-  .main { padding: 12px; text-align: center; }
-  .card-scene { width: min(88vw, 360px); margin: 12px auto; }
-  img { width: 100%; border-radius: 14px; box-shadow: 0 8px 28px rgba(255,120,180,.25); }
-  .nav-buttons { display: flex; justify-content: center; gap: 24px; align-items: center; margin: 12px; }
-  .nav-btn, .view-toggle-btn, .side-toggle-btn { border: 1px solid #f3a6ce; background: white; color: #c040a0; border-radius: 10px; padding: 8px 12px; font-weight: bold; }
-  .grid-view { display: none; padding: 8px; }
-  .grid-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  body.mode-grid .main { display: none; }
-  body.mode-grid .grid-view { display: block; }
-  body.mode-grid .side-toggle-btn { display: inline-block; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --card-shadow: 0 8px 32px rgba(255,120,180,0.25);
+  }
+
+  body {
+    background: linear-gradient(135deg, #ffe4f0 0%, #f0e4ff 50%, #e4f0ff 100%);
+    min-height: 100vh;
+    min-height: 100dvh;
+    height: 100dvh;
+    font-family: 'Hiragino Maru Gothic Pro', 'Rounded Mplus 1c', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* ===== タブバー ===== */
+  .tabs {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    background: linear-gradient(180deg, #fff0f8 0%, #fce4f4 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 2px solid rgba(255,150,200,0.35);
+    padding: 6px 3px 0;
+    gap: 2px;
+  }
+
+  .tab {
+    width: 100%;
+    padding: 6px 2px 5px;
+    font-size: clamp(8px, 2.2vw, 11px);
+    font-weight: 700;
+    color: #c09abf;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    background: rgba(255,255,255,0.6);
+    border-radius: 12px 12px 0 0;
+    white-space: normal;
+    word-break: break-all;
+    overflow: hidden;
+    transition: color 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    line-height: 1.2;
+  }
+
+  .tab.active {
+    color: #e040a0;
+    background: #fff;
+    border-color: rgba(255,150,200,0.5);
+    border-bottom-color: #fff;
+    box-shadow: 0 -2px 8px rgba(255,100,180,0.15);
+  }
+
+  /* ===== カード情報バー ===== */
+  .card-bar {
+    width: 100%;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.5);
+    border-bottom: 1px solid rgba(255,150,200,0.15);
+  }
+
+  .bar-id   { font-size: 12px; font-weight: 700; color: #e060a0; }
+  .bar-char { font-size: 12px; color: #a060c0; font-weight: 600; }
+  .bar-stars { font-size: 13px; letter-spacing: -1px; }
+
+  /* ===== メインエリア ===== */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px 16px;
+    gap: 12px;
+    position: relative;
+  }
+
+  /* ===== カード ===== */
+  .card-scene {
+    width: min(88vw, 360px);
+    perspective: 800px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .card-inner {
+    width: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-face {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+  }
+
+  .card-face.card-back {
+    position: absolute;
+    inset: 0;
+    transform: rotateY(180deg);
+  }
+
+  .card-face img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* シマーオーバーレイ */
+  .card-face::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.5) 50%, transparent 60%);
+    background-size: 200% 200%;
+    background-position: 200% 200%;
+    border-radius: 16px;
+    pointer-events: none;
+  }
+
+  .card-scene.shimmering .card-face::after {
+    animation: shimmer 0.6s ease-out;
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: 200% 200%; }
+    100% { background-position: -50% -50%; }
+  }
+
+  .card-scene.rarity-4 .card-face { box-shadow: 0 8px 32px rgba(245,200,66,0.4); }
+  .card-scene.rarity-3 .card-face { box-shadow: 0 8px 32px rgba(180,180,200,0.4); }
+  .card-scene.rarity-2 .card-face { box-shadow: 0 8px 32px rgba(255,150,190,0.35); }
+
+  /* ===== カード情報 ===== */
+  .card-info { text-align: center; }
+
+  .card-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #c040a0;
+    margin-bottom: 3px;
+    line-height: 1.4;
+  }
+
+  .card-progress { font-size: 12px; color: #a080b0; }
+
+  /* ===== ナビボタン ===== */
+  .nav-buttons {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .nav-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 2px 12px rgba(200,100,180,0.2);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s, box-shadow 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    color: #c040a0;
+  }
+
+  .nav-btn:active {
+    transform: scale(0.9);
+    box-shadow: 0 1px 6px rgba(200,100,180,0.3);
+  }
+
+  .flip-hint { font-size: 11px; color: #c0a0c8; }
+
+  /* ===== パーティクル ===== */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    animation: particle-fly 1.2s ease-out forwards;
+    z-index: 100;
+    will-change: transform, opacity;
+  }
+
+  @keyframes particle-fly {
+    0%   { transform: translate(0,0) scale(1) rotate(0deg); opacity: 1; }
+    100% { transform: translate(var(--tx),var(--ty)) scale(0.3) rotate(var(--rot)); opacity: 0; }
+  }
+
+  /* ===== タブレット（iPad mini等）向けカードサイズ拡大 ===== */
+  @media (min-width: 600px) {
+    .card-scene {
+      /* 縦方向のUI要素(約260px)を除いた高さ × カードのアスペクト比(≈0.72)で幅を決定 */
+      width: min(80vw, calc((100dvh - 260px) * 0.72), 560px);
+    }
+  }
+
+  /* ===== カード切り替えアニメ（本をめくるエフェクト） ===== */
+  .card-scene.page-out-left  { animation: pageOutLeft  0.22s ease-in  forwards; }
+  .card-scene.page-out-right { animation: pageOutRight 0.22s ease-in  forwards; }
+  .card-scene.page-in-left   { animation: pageInLeft   0.28s ease-out forwards; }
+  .card-scene.page-in-right  { animation: pageInRight  0.28s ease-out forwards; }
+
+  @keyframes pageOutLeft  { from { transform: perspective(1200px) translateX(0)    rotateY(  0deg); opacity:1; } to { transform: perspective(1200px) translateX(-30%) rotateY( 35deg); opacity:0; } }
+  @keyframes pageOutRight { from { transform: perspective(1200px) translateX(0)    rotateY(  0deg); opacity:1; } to { transform: perspective(1200px) translateX( 30%) rotateY(-35deg); opacity:0; } }
+  @keyframes pageInLeft   { from { transform: perspective(1200px) translateX( 30%) rotateY(-35deg); opacity:0; } to { transform: perspective(1200px) translateX(0)    rotateY(  0deg); opacity:1; } }
+  @keyframes pageInRight  { from { transform: perspective(1200px) translateX(-30%) rotateY( 35deg); opacity:0; } to { transform: perspective(1200px) translateX(0)    rotateY(  0deg); opacity:1; } }
+
+  /* ===== ビュー切り替えボタン / 面切り替えボタン ===== */
+  .view-toggle-btn,
+  .side-toggle-btn {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(255,150,200,0.4);
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 1px 4px rgba(200,100,180,0.15);
+    color: #c040a0;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: 700;
+    transition: transform 0.15s, box-shadow 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .view-toggle-btn:active,
+  .side-toggle-btn:active {
+    transform: scale(0.9);
+    box-shadow: 0 1px 2px rgba(200,100,180,0.2);
+  }
   .side-toggle-btn { display: none; }
+
+  /* ===== グリッドビュー ===== */
+  .grid-view {
+    display: none;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px;
+    width: 100%;
+  }
+
+  .grid-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  @media (min-width: 480px)  { .grid-cards { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 700px)  { .grid-cards { grid-template-columns: repeat(5, 1fr); } }
+  @media (min-width: 900px)  { .grid-cards { grid-template-columns: repeat(6, 1fr); } }
+
+  .grid-card {
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(200,100,180,0.2);
+    transition: transform 0.12s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .grid-card:active          { transform: scale(0.95); }
+  .grid-card img             { width: 100%; height: auto; display: block; }
+  .grid-card.rarity-4        { box-shadow: 0 2px 10px rgba(245,200,66,0.5); }
+  .grid-card.rarity-3        { box-shadow: 0 2px 8px rgba(180,180,200,0.5); }
+  .grid-card.rarity-2        { box-shadow: 0 2px 8px rgba(255,150,190,0.4); }
+
+  /* グリッドモード時 */
+  body.mode-grid .bar-id,
+  body.mode-grid .bar-char,
+  body.mode-grid .bar-stars  { display: none; }
+  body.mode-grid .main       { display: none; }
+  body.mode-grid .grid-view  { display: block; }
+  body.mode-grid .side-toggle-btn { display: flex; }
 </style>
 </head>
 <body>
+
+<!-- タブ -->
 <div class="tabs" id="tabs">
   <button class="tab active" data-set="0">全て</button>
-  <button class="tab" data-set="1">SPカード</button>
+  <button class="tab" data-set="1">1だん</button>
+  <button class="tab" data-set="2">2だん</button>
+  <button class="tab" data-set="3">SPカード</button>
+  <button class="tab" data-set="4">グミ</button>
+  <button class="tab" data-set="5">MFカード</button>
 </div>
+
+<!-- カード情報バー -->
 <div class="card-bar">
-  <div id="bar-id"></div><div id="bar-char"></div><div id="bar-stars"></div>
-  <button class="side-toggle-btn" id="side-toggle">裏面</button>
-  <button class="view-toggle-btn" id="view-toggle">一覧</button>
+  <div class="bar-id"    id="bar-id">OA1-001</div>
+  <div class="bar-char"  id="bar-char">いのり</div>
+  <div class="bar-stars" id="bar-stars">★★★★</div>
+  <button class="side-toggle-btn" id="side-toggle" aria-label="裏面を表示">裏面</button>
+  <button class="view-toggle-btn" id="view-toggle" aria-label="一覧表示に切り替え">一覧</button>
 </div>
+
 <div class="main">
-  <h3 id="card-name"></h3>
-  <div class="card-scene"><img id="img-front" src="" alt="カード表面"></div>
-  <div id="card-progress"></div>
-  <div class="nav-buttons"><button class="nav-btn" id="btn-prev">◀</button><span>タップで裏面表示</span><button class="nav-btn" id="btn-next">▶</button></div>
+  <div class="card-info">
+    <div class="card-name" id="card-name">すきすきハートバズリウム</div>
+  </div>
+
+  <div class="card-scene rarity-4" id="card-scene">
+    <div class="card-inner" id="card-inner">
+      <div class="card-face card-front">
+        <img id="img-front" src="" alt="カード表面" draggable="false">
+      </div>
+      <div class="card-face card-back">
+        <img id="img-back" src="" alt="カード裏面" draggable="false">
+      </div>
+    </div>
+  </div>
+
+  <div class="card-progress" id="card-progress">1 / 54</div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn" id="btn-prev" aria-label="前のカード">◀</button>
+    <div class="flip-hint">タップで裏面表示</div>
+    <button class="nav-btn" id="btn-next" aria-label="次のカード">▶</button>
+  </div>
 </div>
-<div class="grid-view"><div class="grid-cards" id="grid-cards"></div></div>
+
+<!-- グリッドビュー -->
+<div class="grid-view" id="main-grid">
+  <div class="grid-cards" id="grid-cards"></div>
+</div>
+
 <script>
 const SETS = [
   { label: '全て', base: '', cards: [] },
   {
+    label: '1だん',
+    base: 'https://aipri.jp/card/img/oa1/',
+    cards: [
+      { id:'OA1-001', name:'すきすきハートバズリウム',             char:'いのり', rarity:4 },
+      { id:'OA1-002', name:'すきすきハートバズリウム',             char:'いのり', rarity:4 },
+      { id:'OA1-003', name:'ゆめゆめスターバズリウム',             char:'あおい', rarity:4 },
+      { id:'OA1-004', name:'ゆめゆめスターバズリウム',             char:'あおい', rarity:4 },
+      { id:'OA1-005', name:'ゆうじょうスイーツバズリウム',          char:'ぐみ',   rarity:4 },
+      { id:'OA1-006', name:'トキメキトゥインクルピンク',           char:'いのり', rarity:4 },
+      { id:'OA1-007', name:'トキメキトゥインクルピンク',           char:'いのり', rarity:4 },
+      { id:'OA1-008', name:'トキメキトゥインクルブルー',           char:'あおい', rarity:4 },
+      { id:'OA1-009', name:'トキメキトゥインクルブルー',           char:'あおい', rarity:4 },
+      { id:'OA1-010', name:'リボンアイドルピンク',                 char:'いのり', rarity:4 },
+      { id:'OA1-011', name:'リボンアイドルブルー',                 char:'あおい', rarity:4 },
+      { id:'OA1-012', name:'リボンアイドルグリーン',               char:'ぐみ',   rarity:4 },
+      { id:'OA1-013', name:'ふわふわキャット',                     char:'いのり', rarity:4 },
+      { id:'OA1-014', name:'ふわふわキャット',                     char:'あおい', rarity:4 },
+      { id:'OA1-015', name:'ほしのゆうびんやさん',                 char:'あおい', rarity:4 },
+      { id:'OA1-016', name:'ほしのゆうびんやさん',                 char:'いのり', rarity:4 },
+      { id:'OA1-017', name:'ほしのゆうびんやさん',                 char:'ぐみ',   rarity:4 },
+      { id:'OA1-018', name:'ポップンマシュマロ',                   char:'ぐみ',   rarity:4 },
+      { id:'OA1-019', name:'ポップンマシュマロ',                   char:'いのり', rarity:4 },
+      { id:'OA1-020', name:'ゆうじょうさくらツイン すきすきピンク', char:'いのり', rarity:4 },
+      { id:'OA1-021', name:'ゆうじょうさくらツイン ゆめゆめブルー', char:'あおい', rarity:4 },
+      { id:'OA1-022', name:'アイプリすきすき',                     char:'いのり', rarity:3 },
+      { id:'OA1-023', name:'アイプリすきすき',                     char:'いのり', rarity:3 },
+      { id:'OA1-024', name:'アイプリゆめゆめ',                     char:'あおい', rarity:3 },
+      { id:'OA1-025', name:'アイプリゆめゆめ',                     char:'あおい', rarity:3 },
+      { id:'OA1-026', name:'アイプリゆうじょう',                   char:'ぐみ',   rarity:3 },
+      { id:'OA1-027', name:'ラブリーマーガレット',                 char:'いのり', rarity:3 },
+      { id:'OA1-028', name:'ラブリーマーガレット',                 char:'あおい', rarity:3 },
+      { id:'OA1-029', name:'ラブリーマーガレット',                 char:'ぐみ',   rarity:3 },
+      { id:'OA1-030', name:'やきたてクッキー',                     char:'あおい', rarity:3 },
+      { id:'OA1-031', name:'やきたてクッキー',                     char:'いのり', rarity:3 },
+      { id:'OA1-032', name:'やきたてクッキーココア',               char:'ぐみ',   rarity:3 },
+      { id:'OA1-033', name:'メロンソーダ',                         char:'ぐみ',   rarity:3 },
+      { id:'OA1-034', name:'メロンソーダ',                         char:'いのり', rarity:3 },
+      { id:'OA1-035', name:'メロンソーダ',                         char:'あおい', rarity:3 },
+      { id:'OA1-036', name:'アイスクリーム',                       char:'ぐみ',   rarity:3 },
+      { id:'OA1-037', name:'アイスクリーム',                       char:'いのり', rarity:3 },
+      { id:'OA1-038', name:'ひらめきたんていクラシック',           char:'あおい', rarity:3 },
+      { id:'OA1-039', name:'ひらめきたんていクラシック',           char:'いのり', rarity:3 },
+      { id:'OA1-040', name:'ハニービー',                           char:'あおい', rarity:3 },
+      { id:'OA1-041', name:'ハニービー',                           char:'ぐみ',   rarity:3 },
+      { id:'OA1-042', name:'パステルマカロンオレンジ',             char:'いのり', rarity:3 },
+      { id:'OA1-043', name:'パステルマカロンオレンジ',             char:'あおい', rarity:3 },
+      { id:'OA1-044', name:'しなこワールド',                       char:'いのり', rarity:3 },
+      { id:'OA1-045', name:'しなこワールド',                       char:'あおい', rarity:3 },
+      { id:'OA1-046', name:'おねがいちゅうがくせいふく',           char:'いのり', rarity:2 },
+      { id:'OA1-047', name:'おねがいちゅうがくせいふく',           char:'あおい', rarity:2 },
+      { id:'OA1-048', name:'おねがいちゅうがくせいふく',           char:'ぐみ',   rarity:2 },
+      { id:'OA1-049', name:'ガーリーニット',                       char:'いのり', rarity:2 },
+      { id:'OA1-050', name:'ガーリーニットホワイト',               char:'あおい', rarity:2 },
+      { id:'OA1-051', name:'ガーリーニットイエロー',               char:'ぐみ',   rarity:2 },
+      { id:'OA1-052', name:'チェックセットアップピンク',           char:'いのり', rarity:2 },
+      { id:'OA1-053', name:'チェックセットアップピンク',           char:'あおい', rarity:2 },
+      { id:'OA1-054', name:'ツートンジャケット',                   char:'ぐみ',   rarity:2 },
+      { id:'OA1M-001', name:'バルーンフェスピンク',                char:'いのり', rarity:4 },
+      { id:'OA1M-002', name:'バルーンフェスブルー',                char:'あおい', rarity:4 },
+      { id:'OA1M-003', name:'バルーンフェスグリーン',              char:'ぐみ',   rarity:4 },
+    ]
+  },
+  {
+    label: '2だん',
+    base: 'https://aipri.jp/card/img/oa2/',
+    cards: [
+      { id:'OA2-001', name:'ゆうきのフラワーバズリウム', char:'おりびあ', rarity:4 },
+      { id:'OA2-002', name:'すきすきハートバズリウム', char:'いのり', rarity:4 },
+      { id:'OA2-003', name:'ゆめゆめスターバズリウム', char:'あおい', rarity:4 },
+      { id:'OA2-004', name:'ゆうじょうスイーツバズリウム', char:'ぐみ', rarity:4 },
+      { id:'OA2-005', name:'ビリーブマーチブルー', char:'あおい', rarity:4 },
+      { id:'OA2-006', name:'ビリーブマーチグリーン', char:'ぐみ', rarity:4 },
+      { id:'OA2-007', name:'シールぺったんチアグリーン', char:'ぐみ', rarity:4 },
+      { id:'OA2-008', name:'シールぺったんチアイエロー', char:'おりびあ', rarity:4 },
+      { id:'OA2-009', name:'キャンディポップ', char:'ぐみ', rarity:4 },
+      { id:'OA2-010', name:'キャンディポップ', char:'あおい', rarity:4 },
+      { id:'OA2-011', name:'キャンディポップ', char:'いのり', rarity:4 },
+      { id:'OA2-012', name:'キャンディポップ', char:'おりびあ', rarity:4 },
+      { id:'OA2-013', name:'ゆめかわレインボー', char:'あおい', rarity:4 },
+      { id:'OA2-014', name:'ゆめかわレインボー', char:'いのり', rarity:4 },
+      { id:'OA2-015', name:'ゆめかわレインボー', char:'ぐみ', rarity:4 },
+      { id:'OA2-016', name:'リボンアイドルイエロー', char:'おりびあ', rarity:4 },
+      { id:'OA2-017', name:'リボンアイドルピンク', char:'いのり', rarity:4 },
+      { id:'OA2-018', name:'ガーデンラビット', char:'おりびあ', rarity:4 },
+      { id:'OA2-019', name:'ガーデンラビット', char:'いのり', rarity:4 },
+      { id:'OA2-020', name:'ガーデンラビット', char:'あおい', rarity:4 },
+      { id:'OA2-021', name:'ガーデンラビット', char:'ぐみ', rarity:4 },
+      { id:'OA2-022', name:'ハッピーバースデー！ピンク', char:'いのり', rarity:4 },
+      { id:'OA2-023', name:'アイプリすきすき', char:'いのり', rarity:3 },
+      { id:'OA2-024', name:'アイプリゆめゆめ', char:'あおい', rarity:3 },
+      { id:'OA2-025', name:'アイプリゆうじょう', char:'ぐみ', rarity:3 },
+      { id:'OA2-026', name:'アイプリゆうき', char:'おりびあ', rarity:3 },
+      { id:'OA2-027', name:'たなばたおねがい', char:'いのり', rarity:3 },
+      { id:'OA2-028', name:'たなばたおねがい', char:'ぐみ', rarity:3 },
+      { id:'OA2-029', name:'たなばたおねがい', char:'あおい', rarity:3 },
+      { id:'OA2-030', name:'たなばたおねがい', char:'おりびあ', rarity:3 },
+      { id:'OA2-031', name:'ポッピンマーチピンク', char:'ぐみ', rarity:3 },
+      { id:'OA2-032', name:'クラシックヴァイオリンブルー', char:'あおい', rarity:3 },
+      { id:'OA2-033', name:'ふっくらパン', char:'おりびあ', rarity:3 },
+      { id:'OA2-034', name:'ふっくらパン', char:'いのり', rarity:3 },
+      { id:'OA2-035', name:'ふっくらパン', char:'あおい', rarity:3 },
+      { id:'OA2-036', name:'あめぽつぽつパープル', char:'いのり', rarity:3 },
+      { id:'OA2-037', name:'あめぽつぽつパープル', char:'あおい', rarity:3 },
+      { id:'OA2-038', name:'ひまわりサマーレッド', char:'おりびあ', rarity:3 },
+      { id:'OA2-039', name:'ワンダーランドブルー', char:'いのり', rarity:3 },
+      { id:'OA2-040', name:'アメリカンダイナー', char:'ぐみ', rarity:3 },
+      { id:'OA2-041', name:'アメリカンダイナー', char:'おりびあ', rarity:3 },
+      { id:'OA2-042', name:'おねがいパティシエール ハローキティ', char:'いのり', rarity:3 },
+      { id:'OA2-043', name:'おねがいパティシエール シナモロール', char:'あおい', rarity:3 },
+      { id:'OA2-044', name:'おねがいパティシエール けろけろけろっぴ', char:'ぐみ', rarity:3 },
+      { id:'OA2-045', name:'おねがいパティシエール ポムポムプリン', char:'おりびあ', rarity:3 },
+      { id:'OA2-046', name:'おねがいちゅうがくせいふく', char:'いのり', rarity:2 },
+      { id:'OA2-047', name:'おねがいちゅうがくせいふく', char:'あおい', rarity:2 },
+      { id:'OA2-048', name:'おねがいちゅうがくせいふく', char:'ぐみ', rarity:2 },
+      { id:'OA2-049', name:'おねがいちゅうがくせいふく', char:'おりびあ', rarity:2 },
+      { id:'OA2-050', name:'ワッペンデニム', char:'あおい', rarity:2 },
+      { id:'OA2-051', name:'ワッペンデニム', char:'ぐみ', rarity:2 },
+      { id:'OA2-052', name:'ワッペンパーカー', char:'ぐみ', rarity:2 },
+      { id:'OA2-053', name:'ワッペンパーカー', char:'いのり', rarity:2 },
+      { id:'OA2-054', name:'フレッシュフラワーピンク', char:'いのり', rarity:2 },
+      { id:'OA2-055', name:'チューリップビタミンイエロー', char:'おりびあ', rarity:2 },
+      { id:'OA2-056', name:'レトロガールカナリア', char:'おりびあ', rarity:2 },
+      { id:'OA2-057', name:'アクティブダンスイエロー', char:'あおい', rarity:2 },
+    ]
+  },
+  {
     label: 'スペシャルカード',
     base: 'https://aipri.jp/card/img/special/',
     cards: [
-      { id:'OP-042', name:'たなばたおねがいミント', char:'あおい', rarity:4 },
-      { id:'OP-041', name:'シールぺったんチアホワイトブルー', char:'あおい', rarity:4 },
-      { id:'OP-040', name:'きらめきティアラリボン', char:'あおい', rarity:4 },
-      { id:'OP-039', name:'シナモロール なかよしドリーム', char:'あおい', rarity:4 },
-      { id:'OP-038', name:'ハローキティ なかよしラブリー', char:'いのり', rarity:4 },
-      { id:'OP-037', name:'フォーチュおやすみ', char:'あおい', rarity:4 },
-      { id:'OP-036', name:'フォーチュおやすみ', char:'いのり', rarity:4 },
-      { id:'OP-035', name:'きらめきティアラリボン', char:'いのり', rarity:4 },
-      { id:'OP-033', name:'おねがいパティシエール ハローキティ', char:'いのり', rarity:4 },
-      { id:'OP-032', name:'おねがいパティシエール ポムポムプリン', char:'おりびあ', rarity:4 },
-      { id:'OP-021', name:'やきたてクッキーいちごミルク', char:'あおい', rarity:4 },
-      { id:'OP-022', name:'すきすきハートバズリウム', char:'いのり', rarity:4 },
-      { id:'OP-015', name:'ほしのゆうびんやさんイエロー', char:'あおい', rarity:4 },
-      { id:'OP-020', name:'ラブリーマーガレットイエロー', char:'いのり', rarity:4 },
-      { id:'OP-018', name:'トキメキトゥインクルグリーン', char:'ぐみ', rarity:4 },
-      { id:'OP-014', name:'すきのクリスタルいのりピンク', char:'いのり', rarity:4 },
-      { id:'OTOY-015', name:'プリズムハートパープル', char:'あおい', rarity:4 },
-      { id:'OTOY-005', name:'リボンアイドルパステル', char:'あおい', rarity:4 },
-      { id:'OTOY-004', name:'リボンアイドルパステル', char:'いのり', rarity:4 },
-      { id:'OTOY-003', name:'アイプリゆめゆめブルー', char:'あおい', rarity:4 },
-      { id:'OTOY-002', name:'アイプリすきすきレッド', char:'いのり', rarity:4 },
-      { id:'OTOY-001', name:'プリズムハートブルー', char:'あおい', rarity:4 },
-      { id:'OTOY-000', name:'プリズムハートピンク', char:'いのり', rarity:4 },
+      { id:'OP-033',   name:'おねがいパティシエール ハローキティ',     char:'いのり',   rarity:4 },
+      { id:'OP-032',   name:'おねがいパティシエール ポムポムプリン',   char:'おりびあ', rarity:4 },
+      { id:'OP-021',   name:'やきたてクッキーいちごミルク',           char:'あおい',   rarity:4 },
+      { id:'OP-022',   name:'すきすきハートバズリウム',       char:'いのり', rarity:4 },
+      { id:'OP-015',   name:'ほしのゆうびんやさんイエロー',   char:'あおい', rarity:4 },
+      { id:'OP-020',   name:'ラブリーマーガレットイエロー',   char:'いのり', rarity:4 },
+      { id:'OP-018',   name:'トキメキトゥインクルグリーン',   char:'ぐみ',   rarity:4 },
+      { id:'OP-014',   name:'すきのクリスタルいのりピンク',   char:'いのり', rarity:4 },
+      { id:'OTOY-015', name:'プリズムハートパープル',         char:'あおい', rarity:4 },
+      { id:'OTOY-005', name:'リボンアイドルパステル',         char:'あおい', rarity:4 },
+      { id:'OTOY-004', name:'リボンアイドルパステル',         char:'いのり', rarity:4 },
+      { id:'OTOY-003', name:'アイプリゆめゆめブルー',         char:'あおい', rarity:4 },
+      { id:'OTOY-002', name:'アイプリすきすきレッド',         char:'いのり', rarity:4 },
+      { id:'OTOY-001', name:'プリズムハートブルー',           char:'あおい', rarity:4 },
+      { id:'OTOY-000', name:'プリズムハートピンク',           char:'いのり', rarity:4 },
     ]
-  }
+  },
+  {
+    label: 'コレクショングミ',
+    base: 'https://aipri.jp/card/img/gumi/',
+    cards: [
+      { id:'OG1-001', name:'リボンバレリーナオーロラピンク',       char:'あおい', rarity:3 },
+      { id:'OG1-002', name:'リボンバレリーナオーロラピンク',       char:'いのり', rarity:3 },
+      { id:'OG1-003', name:'リボンバレリーナオーロラピンク',       char:'ぐみ',   rarity:3 },
+      { id:'OG1-005', name:'すきすきハートバズリウムパープル',      char:'いのり', rarity:3 },
+      { id:'OG1-006', name:'ブルーソーダ',                         char:'ぐみ',   rarity:3 },
+      { id:'OG1-007', name:'ブルーソーダ',                         char:'いのり', rarity:3 },
+      { id:'OG1-008', name:'ブルーソーダ',                         char:'あおい', rarity:3 },
+      { id:'OG1-009', name:'いたずらモンスター',                   char:'ぐみ',   rarity:3 },
+      { id:'OG1-010', name:'いたずらモンスター',                   char:'あおい', rarity:3 },
+      { id:'OG1-011', name:'ローズプリンス',                       char:'あおい', rarity:3 },
+      { id:'OG1-012', name:'ローズプリンス',                       char:'いのり', rarity:3 },
+      { id:'OG1-013', name:'リトルプリンセス',                     char:'いのり', rarity:3 },
+      { id:'OG1-014', name:'リトルプリンセス',                     char:'あおい', rarity:3 },
+    ]
+  },
+  {
+    label: 'ミルフィーカード',
+    base: 'https://aipri.jp/card/img/millefeui/',
+    cards: [
+      { id:'OM1-001', name:'ハピネスキューピッド',                             char:'いのり', rarity:3 },
+      { id:'OM1-002', name:'ハピネスバタフライ',                               char:'あおい', rarity:3 },
+      { id:'OM1-003', name:'アニマルロックミント',                             char:'ぐみ',   rarity:3 },
+      { id:'OM1-004', name:'フラワーエプロングリーン',                         char:'ぐみ',   rarity:3 },
+      { id:'OM1-005', name:'にゃんにゃんロリータブルー',                       char:'あおい', rarity:3 },
+      { id:'OM1-006', name:'うさぎぬいぐるみオレンジ',                         char:'いのり', rarity:3 },
+      { id:'OM1-007', name:'レディーフライトピンク',                           char:'いのり', rarity:3 },
+      { id:'OM1-008', name:'アイプリバースフューチャースクールクールパープル', char:'あおい', rarity:3 },
+    ]
+  },
 ];
+
+// 「全て」タブ用：全セットのカードをbase URL付きで結合
 SETS[0].cards = SETS.slice(1).flatMap(s => s.cards.map(c => ({ ...c, base: s.base })));
-let currentSetIndex = 0, currentIndex = 0, cards = SETS[0].cards, base = '', side = 'O', viewMode = 'single';
-const img = document.getElementById('img-front');
-function imgUrl(card, s = side) { return `${card.base || base}${card.id}_${s}.webp`; }
-function updateDisplay(card, index) { document.getElementById('bar-id').textContent = card.id; document.getElementById('bar-char').textContent = card.char; document.getElementById('bar-stars').textContent = '★'.repeat(card.rarity); document.getElementById('card-name').textContent = card.name; document.getElementById('card-progress').textContent = `${index + 1} / ${cards.length}`; img.src = imgUrl(card); }
-function switchSet(i) { currentSetIndex = i; cards = SETS[i].cards; base = SETS[i].base; currentIndex = 0; document.querySelectorAll('.tab').forEach((t, n) => t.classList.toggle('active', n === i)); updateDisplay(cards[0], 0); renderGrid(); }
-function navigate(d) { currentIndex = (currentIndex + d + cards.length) % cards.length; updateDisplay(cards[currentIndex], currentIndex); }
-function flip() { side = side === 'O' ? 'U' : 'O'; updateDisplay(cards[currentIndex], currentIndex); }
-function renderGrid() { const c = document.getElementById('grid-cards'); c.innerHTML = ''; cards.forEach((card, i) => { const d = document.createElement('div'); const im = document.createElement('img'); im.src = imgUrl(card); im.alt = card.name; d.appendChild(im); d.onclick = () => { currentIndex = i; updateDisplay(card, i); setViewMode('single'); }; c.appendChild(d); }); }
-function setViewMode(m) { viewMode = m; document.body.classList.toggle('mode-grid', m === 'grid'); document.getElementById('view-toggle').textContent = m === 'grid' ? '1枚' : '一覧'; if (m === 'grid') renderGrid(); }
-document.getElementById('tabs').onclick = e => { const t = e.target.closest('.tab'); if (t) switchSet(Number(t.dataset.set)); };
-document.getElementById('btn-prev').onclick = () => navigate(-1);
-document.getElementById('btn-next').onclick = () => navigate(1);
-document.getElementById('img-front').onclick = flip;
-document.getElementById('view-toggle').onclick = () => setViewMode(viewMode === 'single' ? 'grid' : 'single');
-document.getElementById('side-toggle').onclick = flip;
+
+const RARITY_STARS = { 4:'★★★★', 3:'★★★', 2:'★★' };
+const RARITY_CLASS  = { 4:'rarity-4', 3:'rarity-3', 2:'rarity-2' };
+const PARTICLES = ['♡','✦','★','✿','💫','🌸','✨'];
+const PARTICLE_COLORS_4 = ['#f5c842','#ffe680','#ff9ecc','#c8a0ff'];
+const PARTICLE_COLORS_3 = ['#d0d0d0','#e8e8e8','#c0c0e8','#b0d0ff'];
+const PARTICLE_COLORS_2 = ['#ff9ec4','#ffcce0','#ffa0d0','#ffb0e8'];
+
+let currentSetIndex = 0;
+let currentIndex    = 0;
+let isFlipped       = false;
+let viewMode        = 'single';
+let gridSide        = 'O';
+let isAnimating     = false;
+let currentDeg      = 0;
+
+let cards = SETS[0].cards;
+let base  = SETS[0].base;
+
+const scene    = document.getElementById('card-scene');
+const inner    = document.getElementById('card-inner');
+const imgFront = document.getElementById('img-front');
+const imgBack  = document.getElementById('img-back');
+const barId    = document.getElementById('bar-id');
+const barChar  = document.getElementById('bar-char');
+const barStars = document.getElementById('bar-stars');
+const cardName = document.getElementById('card-name');
+const cardProgress = document.getElementById('card-progress');
+
+function imgUrl(card, side) {
+  return `${card.base !== undefined ? card.base : base}${card.id}_${side}.webp`;
+}
+
+function updateDisplay(card, index) {
+  barId.textContent    = card.id;
+  barChar.textContent  = card.char;
+  barStars.textContent = RARITY_STARS[card.rarity] || '';
+  cardName.textContent = card.name;
+  cardProgress.textContent = `${index + 1} / ${cards.length}`;
+
+  scene.className = `card-scene ${RARITY_CLASS[card.rarity] || 'rarity-3'}`;
+
+  imgFront.src = imgUrl(card, 'O');
+  imgBack.src  = imgUrl(card, 'U');
+
+  inner.style.transition = 'none';
+  inner.style.transform  = `rotateY(${currentDeg}deg)`;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    inner.style.transition = '';
+  }));
+}
+
+function preload(index) {
+  [index - 1, index + 1].forEach(i => {
+    const idx = (i + cards.length) % cards.length;
+    const c = cards[idx];
+    new Image().src = imgUrl(c, 'O');
+    new Image().src = imgUrl(c, 'U');
+  });
+}
+
+function spawnParticles(x, y, rarity) {
+  const colors = rarity === 4 ? PARTICLE_COLORS_4 : rarity === 3 ? PARTICLE_COLORS_3 : PARTICLE_COLORS_2;
+  const count  = rarity === 4 ? 12 : rarity === 3 ? 9 : 7;
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'particle';
+    el.textContent = PARTICLES[Math.floor(Math.random() * PARTICLES.length)];
+    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+    const dist  = 80 + Math.random() * 80;
+    const tx    = Math.cos(angle) * dist;
+    const ty    = Math.sin(angle) * dist - 40;
+    const rot   = (Math.random() - 0.5) * 360;
+    el.style.cssText = `
+      left:${x}px; top:${y}px;
+      color:${colors[Math.floor(Math.random() * colors.length)]};
+      --tx:${tx}px; --ty:${ty}px; --rot:${rot}deg;
+      animation-delay:${Math.random() * 0.1}s;
+      font-size:${14 + Math.random() * 14}px;
+    `;
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+}
+
+function flipCard(cx, cy) {
+  if (isAnimating) return;
+  isFlipped = !isFlipped;
+
+  const rect     = scene.getBoundingClientRect();
+  const tapRight = (cx || window.innerWidth / 2) >= rect.left + rect.width / 2;
+
+  inner.style.transition = 'transform 0.65s cubic-bezier(0.4, 0, 0.2, 1)';
+  currentDeg += tapRight ? 180 : -180;
+  inner.style.transform  = `rotateY(${currentDeg}deg)`;
+
+  if (!isFlipped) {
+    setTimeout(() => {
+      inner.style.transition = 'none';
+      inner.style.transform  = 'rotateY(0deg)';
+      currentDeg = 0;
+    }, 660);
+  }
+
+  scene.classList.add('shimmering');
+  setTimeout(() => scene.classList.remove('shimmering'), 700);
+  spawnParticles(cx || window.innerWidth / 2, cy || window.innerHeight / 2, cards[currentIndex].rarity);
+}
+
+function navigate(dir) {
+  if (isAnimating) return;
+  isAnimating = true;
+
+  const outClass = dir > 0 ? 'page-out-left'  : 'page-out-right';
+  const inClass  = dir > 0 ? 'page-in-left'   : 'page-in-right';
+
+  scene.classList.add(outClass);
+  setTimeout(() => {
+    scene.classList.remove(outClass);
+    currentIndex = (currentIndex + dir + cards.length) % cards.length;
+    currentDeg   = isFlipped ? 180 : 0;
+    updateDisplay(cards[currentIndex], currentIndex);
+    preload(currentIndex);
+    scene.classList.add(inClass);
+    setTimeout(() => {
+      scene.classList.remove(inClass);
+      isAnimating = false;
+    }, 290);
+  }, 220);
+}
+
+function switchSet(setIndex) {
+  if (setIndex === currentSetIndex) return;
+  currentSetIndex = setIndex;
+  cards        = SETS[setIndex].cards;
+  base         = SETS[setIndex].base;
+  currentIndex = 0;
+  isFlipped    = false;
+  currentDeg   = 0;
+
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', i === setIndex);
+  });
+
+  if (viewMode === 'grid') {
+    renderGrid();
+  } else {
+    updateDisplay(cards[0], 0);
+    preload(0);
+  }
+}
+
+// ===== グリッドビュー =====
+function renderGrid() {
+  const container = document.getElementById('grid-cards');
+  container.innerHTML = '';
+  cards.forEach((card, index) => {
+    const item = document.createElement('div');
+    item.className = `grid-card ${RARITY_CLASS[card.rarity] || 'rarity-3'}`;
+    const img = document.createElement('img');
+    img.src = imgUrl(card, gridSide);
+    img.alt = card.name;
+    img.draggable = false;
+    img.loading = 'lazy';
+    item.appendChild(img);
+    item.addEventListener('click', () => {
+      currentIndex = index;
+      isFlipped    = gridSide === 'U';
+      currentDeg   = gridSide === 'U' ? 180 : 0;
+      updateDisplay(cards[index], index);
+      preload(index);
+      setViewMode('single');
+    });
+    container.appendChild(item);
+  });
+}
+
+function setViewMode(mode) {
+  viewMode = mode;
+  const btn = document.getElementById('view-toggle');
+  if (mode === 'grid') {
+    // 1枚表示の表裏状態をグリッドに引き継ぐ
+    gridSide = isFlipped ? 'U' : 'O';
+    document.body.classList.add('mode-grid');
+    document.body.style.touchAction = 'pan-y';
+    btn.textContent = '1枚';
+    btn.setAttribute('aria-label', '1枚表示に切り替え');
+    const sideBtn = document.getElementById('side-toggle');
+    sideBtn.textContent = gridSide === 'O' ? '裏面' : '表面';
+    renderGrid();
+  } else {
+    // グリッドの表裏状態を1枚表示に引き継ぐ
+    isFlipped  = gridSide === 'U';
+    currentDeg = gridSide === 'U' ? 180 : 0;
+    document.body.classList.remove('mode-grid');
+    document.body.style.touchAction = 'none';
+    btn.textContent = '一覧';
+    btn.setAttribute('aria-label', '一覧表示に切り替え');
+    updateDisplay(cards[currentIndex], currentIndex);
+    preload(currentIndex);
+  }
+}
+
+// ===== タブ =====
+document.getElementById('tabs').addEventListener('click', e => {
+  const tab = e.target.closest('.tab');
+  if (!tab) return;
+  switchSet(Number(tab.dataset.set));
+});
+
+document.getElementById('view-toggle').addEventListener('click', () => {
+  setViewMode(viewMode === 'single' ? 'grid' : 'single');
+});
+
+document.getElementById('side-toggle').addEventListener('click', () => {
+  updateGridSide(gridSide === 'O' ? 'U' : 'O');
+});
+
+function updateGridSide(side) {
+  gridSide = side;
+  const btn = document.getElementById('side-toggle');
+  btn.textContent = side === 'O' ? '裏面' : '表面';
+  btn.setAttribute('aria-label', side === 'O' ? '裏面を表示' : '表面を表示');
+  document.querySelectorAll('#grid-cards .grid-card img').forEach((img, i) => {
+    img.src = imgUrl(cards[i], side);
+  });
+}
+
+// ===== タッチ操作 =====
+let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+let lastTouchEnd = 0;
+
+// ピンチズーム＆パン
+let pinchStartDist  = 0;
+let pinchStartScale = 1;
+let pinchStartPanX  = 0, pinchStartPanY  = 0;
+let pinchStartMidX  = 0, pinchStartMidY  = 0;
+let currentScale    = 1;
+let panX = 0, panY = 0;
+let panStartX = 0, panStartY = 0;
+let panBaseX  = 0, panBaseY  = 0;
+let isPanning = false;
+const SCALE_MIN = 0.8;
+const SCALE_MAX = 5.0;
+
+// カードの自然な中心座標・サイズ（transform なし）
+let sceneNatCX = 0, sceneNatCY = 0, sceneNatW = 0, sceneNatH = 0;
+
+function refreshNatBounds() {
+  if (currentScale > 1.05) return; // 拡大中は測定しない
+  const r = scene.getBoundingClientRect();
+  if (r.height === 0) return;      // 未ロードなら無視
+  sceneNatCX = r.left + r.width  / 2;
+  sceneNatCY = r.top  + r.height / 2;
+  sceneNatW  = r.width;
+  sceneNatH  = r.height;
+}
+
+function getTouchDist(touches) {
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.hypot(dx, dy);
+}
+
+function clampPan(s) {
+  const hw = (sceneNatW * s) / 2;
+  const hh = (sceneNatH * s) / 2;
+  const maxPanX = Math.max(0, hw - sceneNatCX);
+  const minPanX = Math.min(0, window.innerWidth  - sceneNatCX - hw);
+  const maxPanY = Math.max(0, hh - sceneNatCY);
+  const minPanY = Math.min(0, window.innerHeight - sceneNatCY - hh);
+  panX = Math.min(maxPanX, Math.max(minPanX, panX));
+  panY = Math.min(maxPanY, Math.max(minPanY, panY));
+}
+
+function applyTransform(scale, animate) {
+  currentScale = Math.min(SCALE_MAX, Math.max(SCALE_MIN, scale));
+  if (currentScale <= 1.05) { panX = 0; panY = 0; }
+  else clampPan(currentScale);
+  scene.style.transition = animate ? 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)' : 'none';
+  scene.style.transform  = `translate(${panX}px,${panY}px) scale(${currentScale})`;
+}
+
+scene.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    refreshNatBounds(); // ピンチ直前に最新サイズを取得
+    isPanning       = false;
+    pinchStartDist  = getTouchDist(e.touches);
+    pinchStartScale = currentScale;
+    pinchStartPanX  = panX;
+    pinchStartPanY  = panY;
+    pinchStartMidX  = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    pinchStartMidY  = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    return;
+  }
+  touchStartX = panStartX = e.touches[0].clientX;
+  touchStartY = panStartY = e.touches[0].clientY;
+  touchStartTime = Date.now();
+  panBaseX = panX; panBaseY = panY;
+  isPanning = currentScale > 1.05;
+}, { passive: true });
+
+scene.addEventListener('touchmove', e => {
+  if (e.touches.length === 2) {
+    const dist     = getTouchDist(e.touches);
+    const newScale = Math.min(SCALE_MAX, Math.max(SCALE_MIN, pinchStartScale * (dist / pinchStartDist)));
+    // ピンチ開始時の中心点が画面上で動かないようにパンを計算
+    panX = pinchStartMidX - sceneNatCX - (pinchStartMidX - sceneNatCX - pinchStartPanX) * (newScale / pinchStartScale);
+    panY = pinchStartMidY - sceneNatCY - (pinchStartMidY - sceneNatCY - pinchStartPanY) * (newScale / pinchStartScale);
+    currentScale = newScale;
+    clampPan(currentScale);
+    scene.style.transition = 'none';
+    scene.style.transform  = `translate(${panX}px,${panY}px) scale(${currentScale})`;
+    return;
+  }
+  if (!isPanning) return;
+  panX = panBaseX + (e.touches[0].clientX - panStartX);
+  panY = panBaseY + (e.touches[0].clientY - panStartY);
+  clampPan(currentScale);
+  scene.style.transition = 'none';
+  scene.style.transform  = `translate(${panX}px,${panY}px) scale(${currentScale})`;
+}, { passive: true });
+
+scene.addEventListener('touchend', e => {
+  if (pinchStartDist > 0 && e.touches.length < 2) {
+    pinchStartDist = 0;
+    if (currentScale < 1.05) applyTransform(1, true);
+    return;
+  }
+  if (isPanning) {
+    isPanning = false;
+    clampPan(currentScale);
+    scene.style.transform = `translate(${panX}px,${panY}px) scale(${currentScale})`;
+    return;
+  }
+
+  lastTouchEnd = Date.now();
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  const dt = Date.now() - touchStartTime;
+  const cx = e.changedTouches[0].clientX;
+  const cy = e.changedTouches[0].clientY;
+
+  if (currentScale > 1.05) return;
+
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+    navigate(dx < 0 ? 1 : -1);
+  } else if (Math.abs(dx) < 15 && Math.abs(dy) < 15 && dt < 400) {
+    flipCard(cx, cy);
+  }
+}, { passive: true });
+
+// ダブルタップでリセット
+scene.addEventListener('dblclick', () => { panX = 0; panY = 0; applyTransform(1, true); });
+
+// ===== ボタン =====
+document.getElementById('btn-prev').addEventListener('click', () => navigate(-1));
+document.getElementById('btn-next').addEventListener('click', () => navigate(1));
+
+// ===== キーボード =====
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft')              navigate(-1);
+  if (e.key === 'ArrowRight')             navigate(1);
+  if (e.key === ' ' || e.key === 'Enter') flipCard();
+});
+
+// ===== マウスクリック（PC専用） =====
+scene.addEventListener('click', e => {
+  if (Date.now() - lastTouchEnd < 500) return;
+  flipCard(e.clientX, e.clientY);
+});
+
+// 画像ロード後に自然サイズを再計測
+imgFront.addEventListener('load', refreshNatBounds);
+
+// ===== 初期化 =====
 updateDisplay(cards[0], 0);
+preload(0);
 </script>
 </body>
 </html>

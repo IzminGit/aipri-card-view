@@ -59,6 +59,7 @@
 - 全て
 - 1だん
 - 2だん
+- 3だん
 - SPカード
 - グミ
 - MFカード
@@ -87,9 +88,24 @@
 git clone https://github.com/IzminGit/aipri-card-view.git
 ```
 
-フォルダ内の `index.html` をブラウザで開くと利用できます。
+ローカルサーバーを起動します。
 
-特別なビルド作業やインストールは不要です。
+```bash
+cd aipri-card-view
+python3 -m http.server
+```
+
+ブラウザで [http://localhost:8000](http://localhost:8000) を開きます。カードデータは `cards.json` から読み込むため、`index.html` を直接開くのではなくローカルサーバー経由で確認してください。
+
+### 2. カードデータを更新・照合する
+
+カード定義は `cards.json` にまとめています。新しいカードを追加したら、公式カードリストとの差分を次のコマンドで確認できます。
+
+```bash
+node scripts/check-cards.mjs
+```
+
+未登録カード、公式に見つからないカード、名称・キャラクターの差分があればセットごとに表示し、終了コード1で知らせます。
 
 ### 2. GitHub Pagesで公開する
 

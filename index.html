@@ -777,6 +777,7 @@ async function initialize() {
     cards = SETS[0].cards;
     base = SETS[0].base;
     updateDisplay(cards[0], 0);
+    preload(0);
   } catch (error) {
     console.error('カードデータの読み込みに失敗しました。', error);
     cardName.textContent = 'カードデータを読み込めませんでした';
@@ -785,7 +786,6 @@ async function initialize() {
 }
 
 initialize();
-preload(0);
 </script>
 </body>
 </html>

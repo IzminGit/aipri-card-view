@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>おねがいアイプリ カードビューアー</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -315,9 +315,233 @@
   body.mode-grid .main       { display: none; }
   body.mode-grid .grid-view  { display: block; }
   body.mode-grid .side-toggle-btn { display: flex; }
+
+  /* ===== Apple-inspired visual system ===== */
+  :root {
+    --ink: #1d1d1f;
+    --secondary: #6e6e73;
+    --blue: #0071e3;
+    --line: rgba(60, 60, 67, 0.16);
+    --material: rgba(255, 255, 255, 0.72);
+    --raised: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+
+  body {
+    color: var(--ink);
+    background:
+      radial-gradient(72vw 52vh at 3% 0%, rgba(167, 216, 255, 0.7), transparent 72%),
+      radial-gradient(58vw 45vh at 98% 3%, rgba(255, 211, 231, 0.6), transparent 72%),
+      #f5f5f7;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Hiragino Sans", "Yu Gothic", sans-serif;
+    font-optical-sizing: auto;
+  }
+
+  .app-header {
+    width: min(100%, 920px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 18px 8px;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 2px;
+    color: var(--blue);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .eyebrow::before {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.12);
+    content: '';
+  }
+
+  .app-title {
+    margin: 0;
+    color: var(--ink);
+    font-size: clamp(18px, 4vw, 25px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+  }
+
+  .app-note {
+    padding: 7px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 999px;
+    background: var(--material);
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+    color: var(--secondary);
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    backdrop-filter: blur(14px) saturate(170%);
+  }
+
+  .tabs {
+    width: min(calc(100% - 24px), 896px);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    min-height: 46px;
+    margin: 0 auto;
+    padding: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.62);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(20px) saturate(170%);
+  }
+
+  .tab {
+    min-height: 38px;
+    padding: 4px 3px;
+    border: 0;
+    border-radius: 11px;
+    background: transparent;
+    color: var(--secondary);
+    font-size: clamp(9px, 1.8vw, 12px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    transition: transform 160ms ease, color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+  }
+
+  .tab.active {
+    border: 0;
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--ink);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.16);
+  }
+
+  .card-bar {
+    width: min(100%, 920px);
+    margin-top: 8px;
+    padding: 7px clamp(18px, 4vw, 30px);
+    border: 0;
+    background: transparent;
+  }
+
+  .bar-id { color: var(--blue); font-size: 12px; letter-spacing: 0.01em; }
+  .bar-char { color: var(--secondary); font-size: 12px; font-weight: 500; }
+  .bar-stars { color: #b67918; font-size: 12px; }
+
+  .main {
+    width: min(100%, 920px);
+    padding: 4px 16px 14px;
+    gap: 9px;
+  }
+
+  .card-name {
+    margin-bottom: 0;
+    color: var(--ink);
+    font-size: clamp(15px, 3.6vw, 19px);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+  }
+
+  .card-progress, .flip-hint { color: var(--secondary); font-size: 11px; }
+
+  .card-scene {
+    width: min(76vw, 340px);
+    border-radius: 22px;
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  .card-inner {
+    transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .card-face {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    box-shadow: var(--raised);
+  }
+
+  .card-face::after { border-radius: 20px; }
+  .card-scene.rarity-4 .card-face { box-shadow: 0 12px 32px rgba(190, 135, 28, 0.23), 0 2px 5px rgba(0,0,0,.06); }
+  .card-scene.rarity-3 .card-face { box-shadow: 0 12px 30px rgba(100, 108, 134, 0.2), 0 2px 5px rgba(0,0,0,.06); }
+  .card-scene.rarity-2 .card-face { box-shadow: 0 12px 30px rgba(222, 79, 146, 0.2), 0 2px 5px rgba(0,0,0,.06); }
+
+  .nav-buttons { gap: 18px; }
+  .nav-btn, .view-toggle-btn, .side-toggle-btn {
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    color: var(--blue);
+    transition: transform 140ms ease, background 180ms ease, box-shadow 180ms ease;
+    backdrop-filter: blur(14px) saturate(170%);
+  }
+  .nav-btn { width: 42px; height: 42px; font-size: 16px; }
+  .view-toggle-btn, .side-toggle-btn { width: auto; min-width: 38px; height: 34px; padding: 0 11px; border-radius: 999px; font-size: 11px; }
+  .nav-btn:active, .view-toggle-btn:active, .side-toggle-btn:active, .tab:active { transform: scale(0.96); }
+  .nav-btn:hover, .view-toggle-btn:hover, .side-toggle-btn:hover { background: #fff; box-shadow: 0 7px 19px rgba(0, 0, 0, 0.13); }
+
+  .grid-view {
+    width: min(100%, 920px);
+    padding: 4px 16px 18px;
+  }
+  .grid-cards { gap: 10px; }
+  .grid-card {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 180ms cubic-bezier(.2,.8,.2,1), box-shadow 180ms ease;
+  }
+  .grid-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,.14); }
+  .grid-card-face { border-radius: 13px; }
+  .grid-card.rarity-4, .grid-card.rarity-3, .grid-card.rarity-2 { box-shadow: 0 4px 15px rgba(0,0,0,.1); }
+
+  .card-scene.page-out-left, .card-scene.page-out-right,
+  .card-scene.page-in-left, .card-scene.page-in-right { animation-duration: 0.28s; animation-timing-function: cubic-bezier(.2,.8,.2,1); }
+  @keyframes pageOutLeft { to { transform: translateX(-10%) scale(.98); opacity: 0; } }
+  @keyframes pageOutRight { to { transform: translateX(10%) scale(.98); opacity: 0; } }
+  @keyframes pageInLeft { from { transform: translateX(10%) scale(.98); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
+  @keyframes pageInRight { from { transform: translateX(-10%) scale(.98); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
+
+  @media (min-width: 600px) {
+    .card-scene { width: min(55vw, calc((100dvh - 300px) * 0.7), 420px); }
+  }
+
+  @media (max-width: 460px) {
+    .app-header { padding: 10px 16px 7px; }
+    .app-note { display: none; }
+    .tabs { width: calc(100% - 16px); }
+    .card-bar { padding-inline: 16px; }
+    .card-scene { width: min(80vw, 330px); }
+    .grid-cards { gap: 7px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    .grid-card:hover { transform: none; }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .tabs, .app-note, .nav-btn, .view-toggle-btn, .side-toggle-btn { background: #fff; backdrop-filter: none; }
+  }
+
+  @media (prefers-contrast: more) {
+    .tabs, .card-face, .grid-card, .nav-btn, .view-toggle-btn, .side-toggle-btn { border-color: rgba(0, 0, 0, 0.6); }
+  }
 </style>
 </head>
 <body>
+
+<header class="app-header">
+  <div>
+    <p class="eyebrow">AIPRI CARD COLLECTION</p>
+    <h1 class="app-title">おねがいアイプリ</h1>
+  </div>
+  <p class="app-note">カードをタップして裏面へ</p>
+</header>
 
 <!-- タブ -->
 <div class="tabs" id="tabs">

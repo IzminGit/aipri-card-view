@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-18",
+  "updatedAt": "2026-07-31",
   "sets": [
     {
       "label": "1だん",
@@ -1090,6 +1090,24 @@
       "sourcePage": "https://aipri.jp/card/special.html",
       "cards": [
         {
+          "id": "OP-063",
+          "name": "ガーデンラビットのはらグリーン",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OP-062",
+          "name": "ゴシックフレアピンク",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OP-059",
+          "name": "シールぺったんチアトゥインクル",
+          "char": "あおい",
+          "rarity": 4
+        },
+        {
           "id": "OP-050",
           "name": "トキメキトゥインクルミックス",
           "char": "あおい",
@@ -1300,6 +1318,84 @@
       "base": "https://aipri.jp/card/img/gumi/",
       "sourcePage": "https://aipri.jp/card/gumi.html",
       "cards": [
+        {
+          "id": "OG2-001",
+          "name": "フラワーブーケオレンジ",
+          "char": "おりびあ",
+          "rarity": 3
+        },
+        {
+          "id": "OG2-002",
+          "name": "フラワーブーケオレンジ",
+          "char": "あおい",
+          "rarity": 3
+        },
+        {
+          "id": "OG2-003",
+          "name": "フラワーブーケオレンジ",
+          "char": "ぐみ",
+          "rarity": 3
+        },
+        {
+          "id": "OG2-005",
+          "name": "ゆうじょうスイーツバズリウムレッド",
+          "char": "ぐみ",
+          "rarity": 3
+        },
+        {
+          "id": "OG2-006",
+          "name": "ビーチマリンスカイ",
+          "char": "あおい",
+          "rarity": 3
+        },
+        {
+          "id": "OG2-007",
+          "name": "ビーチマリンスカイ",
+          "char": "いのり",
+          "rarity": 3
+        },
+        {
+          "id": "OG2-008",
+          "name": "ビーチマリンスカイ",
+          "char": "おりびあ",
+          "rarity": 3
+        },
+        {
+          "id": "OG2-009",
+          "name": "ふわもこかいじゅう",
+          "char": "ぐみ",
+          "rarity": 3
+        },
+        {
+          "id": "OG2-010",
+          "name": "ふわもこかいじゅう",
+          "char": "あおい",
+          "rarity": 3
+        },
+        {
+          "id": "OG2-011",
+          "name": "アカデミー",
+          "char": "おりびあ",
+          "rarity": 3
+        },
+        {
+          "id": "OG2-012",
+          "name": "アカデミー",
+          "char": "いのり",
+          "rarity": 3
+        },
+        {
+          "id": "OG2-013",
+          "name": "エンジェルアイス",
+          "char": "いのり",
+          "rarity": 3
+        },
+        {
+          "id": "OG2-014",
+          "name": "エンジェルアイス",
+          "char": "ぐみ",
+          "rarity": 3
+        },
         {
           "id": "OG1-001",
           "name": "リボンバレリーナオーロラピンク",

@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-07-31",
+  "updatedAt": "2026-09-18",
   "sets": [
     {
       "label": "1だん",
-      "base": "https://aipri.jp/card/img/oa1/",
       "sourcePage": "https://aipri.jp/card/oa1.html",
+      "base": "https://aipri.jp/card/img/oa1/",
       "cards": [
         {
           "id": "OA1-001",
@@ -334,26 +334,26 @@
           "id": "OA1M-001",
           "name": "バルーンフェスピンク",
           "char": "いのり",
-          "rarity": 4
+          "rarity": 3
         },
         {
           "id": "OA1M-002",
           "name": "バルーンフェスブルー",
           "char": "あおい",
-          "rarity": 4
+          "rarity": 3
         },
         {
           "id": "OA1M-003",
           "name": "バルーンフェスグリーン",
           "char": "ぐみ",
-          "rarity": 4
+          "rarity": 3
         }
       ]
     },
     {
       "label": "2だん",
-      "base": "https://aipri.jp/card/img/oa2/",
       "sourcePage": "https://aipri.jp/card/oa2.html",
+      "base": "https://aipri.jp/card/img/oa2/",
       "cards": [
         {
           "id": "OA2-001",
@@ -701,32 +701,32 @@
           "id": "OA2M-001",
           "name": "メルヘンフェスピンク",
           "char": "いのり",
-          "rarity": 4
+          "rarity": 3
         },
         {
           "id": "OA2M-002",
           "name": "メルヘンフェスブルー",
           "char": "あおい",
-          "rarity": 4
+          "rarity": 3
         },
         {
           "id": "OA2M-003",
           "name": "メルヘンフェスグリーン",
           "char": "ぐみ",
-          "rarity": 4
+          "rarity": 3
         },
         {
           "id": "OA2M-004",
           "name": "メルヘンフェスイエロー",
           "char": "おりびあ",
-          "rarity": 4
+          "rarity": 3
         }
       ]
     },
     {
       "label": "3だん",
-      "base": "https://aipri.jp/card/img/oa3/",
       "sourcePage": "https://aipri.jp/card/oa3.html",
+      "base": "https://aipri.jp/card/img/oa3/",
       "cards": [
         {
           "id": "OA3-001",
@@ -1081,14 +1081,483 @@
           "name": "ショルダーフリルベリーぺリー",
           "char": "エマ",
           "rarity": 2
+        },
+        {
+          "id": "OA3M-001",
+          "name": "シーサイドフェスピンク",
+          "char": "いのり",
+          "rarity": 3
+        },
+        {
+          "id": "OA3M-002",
+          "name": "シーサイドフェスブルー",
+          "char": "あおい",
+          "rarity": 3
+        },
+        {
+          "id": "OA3M-003",
+          "name": "シーサイドフェスグリーン",
+          "char": "ぐみ",
+          "rarity": 3
+        },
+        {
+          "id": "OA3M-004",
+          "name": "シーサイドフェスイエロー",
+          "char": "おりびあ",
+          "rarity": 3
+        },
+        {
+          "id": "OA3M-005",
+          "name": "シーサイドフェスレッド",
+          "char": "ナナ",
+          "rarity": 3
+        },
+        {
+          "id": "OA3M-006",
+          "name": "シーサイドフェスパープル",
+          "char": "エマ",
+          "rarity": 3
         }
       ]
     },
     {
-      "label": "スペシャルカード",
-      "base": "https://aipri.jp/card/img/special/",
-      "sourcePage": "https://aipri.jp/card/special.html",
+      "label": "4だん",
+      "sourcePage": "https://aipri.jp/card/oa4.html",
+      "base": "https://aipri.jp/card/img/oa4/",
       "cards": [
+        {
+          "id": "OA4-001",
+          "name": "スマイルハートバズリウムピンク",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-002",
+          "name": "ピュアハートバズリウムブルー",
+          "char": "あおい",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-003",
+          "name": "スマイルハートバズリウムグリーン",
+          "char": "ぐみ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-004",
+          "name": "ピュアハートバズリウムイエロー",
+          "char": "おりびあ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-005",
+          "name": "スマイルハートバズリウムレッド",
+          "char": "ナナ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-006",
+          "name": "ピュアハートバズリウムパープル",
+          "char": "エマ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-007",
+          "name": "スマイルパレードバズリウム",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-008",
+          "name": "ピュアパレードバズリウム",
+          "char": "おりびあ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-009",
+          "name": "ピュアパレードバズリウム",
+          "char": "エマ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-010",
+          "name": "エレガントクリスタルパープル",
+          "char": "エマ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-011",
+          "name": "エレガントクリスタルピンク",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-012",
+          "name": "パンプキンハロウィンブラック",
+          "char": "ぐみ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-013",
+          "name": "パンプキンハロウィンパープル",
+          "char": "おりびあ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-014",
+          "name": "ガーリーピアノブラック",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-015",
+          "name": "フラワーメモリーペールブルー",
+          "char": "あおい",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-016",
+          "name": "リボンアイドルレッド",
+          "char": "ナナ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-017",
+          "name": "リボンアイドルパープル",
+          "char": "エマ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-018",
+          "name": "リボンアイドルグリーン",
+          "char": "ぐみ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-019",
+          "name": "ミステリーファントム",
+          "char": "おりびあ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-020",
+          "name": "ミステリーファントムレッド",
+          "char": "ぐみ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-021",
+          "name": "ハッピーバースデー！スカイブルー",
+          "char": "あおい",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-022",
+          "name": "ハッピーバースデー！レッド",
+          "char": "ナナ",
+          "rarity": 4
+        },
+        {
+          "id": "OA4-023",
+          "name": "アイプリすきすき",
+          "char": "いのり",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-024",
+          "name": "アイプリゆめゆめ",
+          "char": "あおい",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-025",
+          "name": "アイプリゆうじょう",
+          "char": "ぐみ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-026",
+          "name": "アイプリゆうき",
+          "char": "おりびあ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-027",
+          "name": "アイプリじょうねつ",
+          "char": "ナナ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-028",
+          "name": "アイプリきぼう",
+          "char": "エマ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-029",
+          "name": "メモリアルクロック",
+          "char": "エマ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-030",
+          "name": "ピクニックバスケット",
+          "char": "おりびあ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-031",
+          "name": "ピクニックバスケット",
+          "char": "ぐみ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-032",
+          "name": "テディベアフリル",
+          "char": "いのり",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-033",
+          "name": "テディベアフリル",
+          "char": "ぐみ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-034",
+          "name": "テディベアフリル",
+          "char": "ナナ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-035",
+          "name": "マーチングエール",
+          "char": "いのり",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-036",
+          "name": "マーチングエール",
+          "char": "ぐみ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-037",
+          "name": "マーチングエール",
+          "char": "ナナ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-038",
+          "name": "エンジェルスポーツ",
+          "char": "あおい",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-039",
+          "name": "とうほくさん かれんくん コーデ",
+          "char": "いのり",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-040",
+          "name": "とうほくさん みうちゃん コーデ",
+          "char": "あおい",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-041",
+          "name": "メゾ ピアノ スイートリボン",
+          "char": "いのり",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-042",
+          "name": "エンジェルブルー ポップデニム",
+          "char": "あおい",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-043",
+          "name": "エンジェルブルー ポップデニム",
+          "char": "ぐみ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-044",
+          "name": "エンジェルブルー ポップデニム",
+          "char": "おりびあ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-045",
+          "name": "メゾ ピアノ スイートリボン",
+          "char": "ナナ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-046",
+          "name": "メゾ ピアノ スイートリボン",
+          "char": "エマ",
+          "rarity": 3
+        },
+        {
+          "id": "OA4-047",
+          "name": "おねがいちゅうがくせいふく",
+          "char": "いのり",
+          "rarity": 2
+        },
+        {
+          "id": "OA4-048",
+          "name": "おねがいちゅうがくせいふく",
+          "char": "あおい",
+          "rarity": 2
+        },
+        {
+          "id": "OA4-049",
+          "name": "おねがいちゅうがくせいふく",
+          "char": "ぐみ",
+          "rarity": 2
+        },
+        {
+          "id": "OA4-050",
+          "name": "おねがいちゅうがくせいふく",
+          "char": "おりびあ",
+          "rarity": 2
+        },
+        {
+          "id": "OA4-051",
+          "name": "ハイセンスがくえんせいふく",
+          "char": "ナナ",
+          "rarity": 2
+        },
+        {
+          "id": "OA4-052",
+          "name": "ハイセンスがくえんせいふく",
+          "char": "エマ",
+          "rarity": 2
+        },
+        {
+          "id": "OA4-053",
+          "name": "くまくまパーク",
+          "char": "いのり",
+          "rarity": 2
+        },
+        {
+          "id": "OA4-054",
+          "name": "ハートプリントプルオーバー",
+          "char": "あおい",
+          "rarity": 2
+        },
+        {
+          "id": "OA4-055",
+          "name": "キルティングハートカーデメロン",
+          "char": "ぐみ",
+          "rarity": 2
+        },
+        {
+          "id": "OA4-056",
+          "name": "キルティングハートカーデ",
+          "char": "おりびあ",
+          "rarity": 2
+        },
+        {
+          "id": "OA4-057",
+          "name": "オフショルニット",
+          "char": "ナナ",
+          "rarity": 2
+        },
+        {
+          "id": "OA4-058",
+          "name": "ドレッシーシャツ",
+          "char": "エマ",
+          "rarity": 2
+        }
+      ]
+    },
+    {
+      "label": "スペシャルアイプリカード",
+      "sourcePage": "https://aipri.jp/card/special.html",
+      "base": "https://aipri.jp/card/img/special/",
+      "cards": [
+        {
+          "id": "OP-076",
+          "name": "ピュアハートバズリウムブルー",
+          "char": "あおい",
+          "rarity": 4
+        },
+        {
+          "id": "OP-075",
+          "name": "スマイルハートバズリウムピンク",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OTOY-029",
+          "name": "ミラクルダイヤモンド",
+          "char": "あおい",
+          "rarity": 4
+        },
+        {
+          "id": "OTOY-028",
+          "name": "ミラクルダイヤモンド",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OP-017",
+          "name": "ポップンマシュマロピンク",
+          "char": "あおい",
+          "rarity": 4
+        },
+        {
+          "id": "OP-072",
+          "name": "すみっコぐらし コーデ<br><span>Ⓒ2026 San-X Co., Ltd. All Rights Reserved.</span>",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OP-065",
+          "name": "メルヘンフェスレッド",
+          "char": "ナナ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-066",
+          "name": "メルヘンフェスパープル",
+          "char": "エマ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-028",
+          "name": "ゆめゆめスターバズリウムいのりピンク",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OP-029",
+          "name": "すきすきハートバズリウムあおいブルー",
+          "char": "あおい",
+          "rarity": 4
+        },
+        {
+          "id": "OP-030",
+          "name": "ゆうきのフラワーバズリウムぐみグリーン",
+          "char": "ぐみ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-031",
+          "name": "ゆうじょうスイーツバズリウムおりびあイエロー",
+          "char": "おりびあ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-067",
+          "name": "ジューシーサマーパープル",
+          "char": "いのり",
+          "rarity": 4
+        },
         {
           "id": "OP-063",
           "name": "ガーデンラビットのはらグリーン",
@@ -1314,9 +1783,196 @@
       ]
     },
     {
-      "label": "コレクショングミ",
-      "base": "https://aipri.jp/card/img/gumi/",
+      "label": "スペシャルカードパック",
+      "sourcePage": "https://aipri.jp/card/spcardpack.html",
+      "base": "https://aipri.jp/card/img/spcardpack/",
+      "cards": [
+        {
+          "id": "OP-078",
+          "name": "スマイルパレードバズリウム",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OP-079",
+          "name": "ピュアパレードバズリウム",
+          "char": "あおい",
+          "rarity": 4
+        },
+        {
+          "id": "OP-080",
+          "name": "スマイルパレードバズリウム",
+          "char": "ぐみ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-081",
+          "name": "ピュアパレードバズリウム",
+          "char": "おりびあ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-082",
+          "name": "スマイルパレードバズリウム",
+          "char": "ナナ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-083",
+          "name": "ピュアパレードバズリウム",
+          "char": "エマ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-084",
+          "name": "スマイルパレードバズリウム",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OP-085",
+          "name": "ピュアパレードバズリウム",
+          "char": "あおい",
+          "rarity": 4
+        },
+        {
+          "id": "OP-086",
+          "name": "スマイルパレードバズリウム",
+          "char": "ぐみ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-087",
+          "name": "ピュアパレードバズリウム",
+          "char": "おりびあ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-088",
+          "name": "スマイルパレードバズリウム",
+          "char": "ナナ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-089",
+          "name": "ピュアパレードバズリウム",
+          "char": "エマ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-090",
+          "name": "すきすきハートバズリウム",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OP-091",
+          "name": "ゆめゆめスターバズリウム",
+          "char": "あおい",
+          "rarity": 4
+        },
+        {
+          "id": "OP-092",
+          "name": "ゆうじょうスイーツバズリウム",
+          "char": "ぐみ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-093",
+          "name": "ゆうきのフラワーバズリウム",
+          "char": "おりびあ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-094",
+          "name": "じょうねつゴシックバズリウム",
+          "char": "ナナ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-095",
+          "name": "きぼうのクリスタルバズリウム",
+          "char": "エマ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-096",
+          "name": "トレジャーパイレーツピンク",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OP-097",
+          "name": "ミステリーファントムエメラルド",
+          "char": "あおい",
+          "rarity": 4
+        },
+        {
+          "id": "OP-098",
+          "name": "マジカルミラクルライトブルー",
+          "char": "ぐみ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-099",
+          "name": "トレジャーパイレーツイエロー",
+          "char": "おりびあ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-100",
+          "name": "マジカルミラクルゴシックピンク",
+          "char": "ナナ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-101",
+          "name": "ミステリーファントムホワイト",
+          "char": "エマ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-102",
+          "name": "おねがいちゅうがくせいふく",
+          "char": "いのり",
+          "rarity": 4
+        },
+        {
+          "id": "OP-103",
+          "name": "おねがいちゅうがくせいふく",
+          "char": "あおい",
+          "rarity": 4
+        },
+        {
+          "id": "OP-104",
+          "name": "おねがいちゅうがくせいふく",
+          "char": "ぐみ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-105",
+          "name": "おねがいちゅうがくせいふく",
+          "char": "おりびあ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-106",
+          "name": "ハイセンスがくえんせいふく",
+          "char": "ナナ",
+          "rarity": 4
+        },
+        {
+          "id": "OP-107",
+          "name": "ハイセンスがくえんせいふく",
+          "char": "エマ",
+          "rarity": 4
+        }
+      ]
+    },
+    {
+      "label": "アイプリカード♪コレクショングミ",
       "sourcePage": "https://aipri.jp/card/gumi.html",
+      "base": "https://aipri.jp/card/img/gumi/",
       "cards": [
         {
           "id": "OG2-001",
@@ -1478,8 +2134,8 @@
     },
     {
       "label": "ミルフィーカード",
-      "base": "https://aipri.jp/card/img/millefeui/",
       "sourcePage": "https://aipri.jp/card/millefeui.html",
+      "base": "https://aipri.jp/card/img/millefeui/",
       "cards": [
         {
           "id": "OTOY-020",

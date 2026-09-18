@@ -29,8 +29,8 @@
   /* ===== タブバー ===== */
   .tabs {
     width: 100%;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    display: flex;
+    overflow-x: auto;
     background: linear-gradient(180deg, #fff0f8 0%, #fce4f4 100%);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -40,7 +40,7 @@
   }
 
   .tab {
-    width: 100%;
+    flex: 0 0 auto;
     padding: 6px 2px 5px;
     font-size: clamp(8px, 2.2vw, 11px);
     font-weight: 700;
@@ -389,7 +389,6 @@
 
   .tabs {
     width: min(calc(100% - 24px), 896px);
-    grid-template-columns: repeat(7, minmax(0, 1fr));
     min-height: 46px;
     margin: 0 auto;
     padding: 3px;
@@ -544,15 +543,7 @@
 </header>
 
 <!-- タブ -->
-<div class="tabs" id="tabs">
-  <button class="tab active" data-set="0">全て</button>
-  <button class="tab" data-set="1">1だん</button>
-  <button class="tab" data-set="2">2だん</button>
-  <button class="tab" data-set="3">3だん</button>
-  <button class="tab" data-set="4">SPカード</button>
-  <button class="tab" data-set="5">グミ</button>
-  <button class="tab" data-set="6">MFカード</button>
-</div>
+<div class="tabs" id="tabs" aria-label="カードセット"></div>
 
 <!-- カード情報バー -->
 <div class="card-bar">
@@ -745,6 +736,18 @@ function switchSet(setIndex) {
     updateDisplay(cards[0], 0);
     preload(0);
   }
+}
+
+function renderTabs() {
+  const container = document.getElementById('tabs');
+  container.replaceChildren(...SETS.map((set, index) => {
+    const tab = document.createElement('button');
+    tab.type = 'button';
+    tab.className = `tab${index === currentSetIndex ? ' active' : ''}`;
+    tab.dataset.set = index;
+    tab.textContent = set.label;
+    return tab;
+  }));
 }
 
 // ===== グリッドビュー =====
@@ -998,6 +1001,7 @@ async function initialize() {
     const data = await response.json();
     SETS = [{ label: '全て', base: '', cards: [] }, ...data.sets];
     SETS[0].cards = SETS.slice(1).flatMap(set => set.cards.map(card => ({ ...card, base: set.base })));
+    renderTabs();
     cards = SETS[0].cards;
     base = SETS[0].base;
     updateDisplay(cards[0], 0);
